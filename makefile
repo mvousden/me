@@ -33,6 +33,6 @@ exec_tests: test $(TEST_OUTPUTS_DIR)
 		valgrind --log-file="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt" "$(EXEC_DIR)/$$TEST"; \
 	done
 clean:
-	rm --force --recursive *.o $(EXEC_DIR)
+	rm --force --recursive *.o $(EXEC_DIR) $(TEST_OUTPUTS_DIR)
 .PHONY: clean debug exec_tests test
 .PRECIOUS: %.o
