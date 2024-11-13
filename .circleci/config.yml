@@ -6,12 +6,13 @@ jobs:
     steps:
       - checkout
       - run: "sudo apt update"
-      - run: "sudo apt install clang valgrind"
+      - run: "sudo apt install valgrind"
       - run: "git clone git@github.com:ThrowTheSwitch/Unity.git"
       - run:
-          command: "gcc -c unity.c"
+          command: "cc -c unity.c"
           working_directory: ./Unity/src/
       - run:
           command: "make exec_tests"
           environment:
             UNITY_DIR: ./Unity/
+            CC: cc
