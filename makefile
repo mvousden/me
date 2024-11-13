@@ -28,11 +28,17 @@ test: $(EXEC_DIR) $(TEST_PATHS)
 $(EXEC_DIR)/test_%: test_%.o $(UNITY_OBJ) $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
 exec_tests: test $(TEST_OUTPUTS_DIR)
+	RC=0; \
 	for TEST in $(TESTS); do \
 		printf "\nRunning $${TEST}..."; \
 		valgrind --log-file="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt" "$(EXEC_DIR)/$$TEST" > "$(TEST_OUTPUTS_DIR)/$${TEST}_result.txt"; \
+		if [ $$? -ne 0 ]; then \
+			RC=1; \
+			printf " FAIL: check output logs."; \
+		fi; \
 	done; \
-	printf "\nTesting complete.\n";
+	printf "\nTesting complete.\n"; \
+	exit $$RC;
 clean:
 	rm --force --recursive *.o $(EXEC_DIR) $(TEST_OUTPUTS_DIR)
 .PHONY: clean debug exec_tests test
