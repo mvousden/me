@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  test:
     machine:
       image: ubuntu-2204:current
     steps:
@@ -16,3 +16,5 @@ jobs:
           environment:
             UNITY_DIR: ./Unity/
             CC: cc
+      - store_test_results:
+          path: test_outputs
