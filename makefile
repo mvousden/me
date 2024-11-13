@@ -1,5 +1,5 @@
-UNITY_DIR = /home/mark/repos/unity/
-UNITY_OBJ = $(UNITY_DIR)src/unity.o
+UNITY_DIR ?= /home/mark/repos/unity/
+UNITY_OBJ ?= $(UNITY_DIR)src/unity.o
 CC = ccache clang
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3
 SANITIZEFLAGS = #-fsanitize=address -fsanitize=undefined
