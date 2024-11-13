@@ -1,5 +1,6 @@
 UNITY_DIR ?= /home/mark/repos/unity/
 UNITY_OBJ ?= $(UNITY_DIR)src/unity.o
+UNITY_OUTPUT_PARSER ?= $(UNITY_DIR)auto/parse_output.rb
 CC ?= ccache clang
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3
 SANITIZEFLAGS = #-fsanitize=address -fsanitize=undefined
@@ -30,9 +31,16 @@ $(EXEC_DIR)/test_%: test_%.o $(UNITY_OBJ) $(OBJ)
 exec_tests: test $(TEST_OUTPUTS_DIR)
 	RC=0; \
 	for TEST in $(TESTS); do \
+		RESULT_TXT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_result.txt"; \
+		RESULT_VG_LOG_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt"; \
+		RESULT_JUNIT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_junit.xml"; \
 		printf "\nRunning $${TEST}..."; \
-		valgrind --log-file="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt" "$(EXEC_DIR)/$$TEST" > "$(TEST_OUTPUTS_DIR)/$${TEST}_result.txt"; \
-		if [ $$? -ne 0 ]; then \
+		valgrind --log-file="$$RESULT_VG_LOG_PATH" "$(EXEC_DIR)/$$TEST" \
+			> "$$RESULT_TXT_PATH"; \
+		ERR=$$?; \
+		ruby "$(UNITY_OUTPUT_PARSER)" -xml "$$RESULT_TXT_PATH" > /dev/null; \
+		mv report.xml "$$RESULT_JUNIT_PATH"; \
+		if [ $$ERR -ne 0 ]; then \
 			RC=1; \
 			printf " FAIL: check output logs."; \
 		fi; \

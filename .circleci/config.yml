@@ -16,5 +16,7 @@ jobs:
           environment:
             UNITY_DIR: ./Unity/
             CC: cc
+      - store_test_results:
+          path: test_outputs
       - store_artifacts:
           path: test_outputs
