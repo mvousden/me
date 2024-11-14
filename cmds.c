@@ -49,7 +49,7 @@ int cmd_dump_state(void)
 
 int cmd_insert_char(const unsigned in)
 {
-    size_t max;
+    unsigned short max;
     insert_char_into_line(state.currentLine, (char)in,
                           state.curCol - conf.colOffset);
     max = state.currentLine->len + conf.colOffset;
