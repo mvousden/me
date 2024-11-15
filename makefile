@@ -29,12 +29,12 @@ test: $(EXEC_DIR) $(TEST_PATHS)
 $(EXEC_DIR)/test_%: test_%.o $(UNITY_OBJ) $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
 exec_tests: test $(TEST_OUTPUTS_DIR)
-	RC=0; \
+	@RC=0; \
 	for TEST in $(TESTS); do \
 		RESULT_TXT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_result.txt"; \
 		RESULT_VG_LOG_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt"; \
 		RESULT_JUNIT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_junit.xml"; \
-		printf "\nRunning $${TEST}..."; \
+		printf "Running $${TEST}..."; \
 		valgrind --log-file="$$RESULT_VG_LOG_PATH" "$(EXEC_DIR)/$$TEST" \
 			> "$$RESULT_TXT_PATH"; \
 		ERR=$$?; \
@@ -44,8 +44,9 @@ exec_tests: test $(TEST_OUTPUTS_DIR)
 			RC=1; \
 			printf " FAIL: check output logs."; \
 		fi; \
+		printf "\n"; \
 	done; \
-	printf "\nTesting complete.\n"; \
+	printf "Testing complete.\n"; \
 	exit $$RC;
 clean:
 	rm --force --recursive *.o $(EXEC_DIR) $(TEST_OUTPUTS_DIR)
