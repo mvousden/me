@@ -1,12 +1,12 @@
+#include <assert.h>
 #include <stdlib.h>
-
 #include <string.h>
 
 #include "helpers.h"
 #include "unity.h"
 
 #define SRC_SIZ 10
-#define BUF_SIZ 2 * SRC_SIZ
+#define BUF_SIZ 20  /* SRC_SIZ * 2 */
 
 char buf[BUF_SIZ];
 char src[SRC_SIZ];
@@ -15,6 +15,7 @@ char src[SRC_SIZ];
 void setUp(void)
 {
     size_t index;
+    assert(BUF_SIZ == SRC_SIZ * 2);
     for (index = 0; index < BUF_SIZ; buf[index++] = 0);
     for (index = 0; index < SRC_SIZ; src[index++] = 0);
 }
@@ -80,33 +81,23 @@ void test_slide_copy_concatenate(void)
 void test_slide_copy_termination(void)
 {
     char* c = buf;
-    char compBuf[BUF_SIZ];
 
     /* Remove the guardrails */
     size_t index;
     const char holder = 'X';
-    for (index = 0; index < BUF_SIZ; index++)
-    {
-        buf[index] = holder;
-        compBuf[index] = holder;
-    }
+    for (index = 0; index < BUF_SIZ; buf[index++] = holder);
 
     src[0] = 'a';
     src[1] = 'b';
     src[2] = 'c';
-
     c = slide_copy(src, c);
     c = slide_copy(src, c);
 
-    /* (artifically) terminate both buffers at the end to make string
-     * comparison easier - snprintf needs strlen for %s. */
-    compBuf[BUF_SIZ - 1] = 0;
+    /* (artifically) terminate the buffer at the end to make string
+     * comparison easier */
     buf[BUF_SIZ - 1] = 0;
 
-    /* Create our comparator */
-    snprintf(compBuf, BUF_SIZ, "%s%s%s", src, src, &compBuf[6]);
-
-    TEST_ASSERT_EQUAL_STRING_MESSAGE(compBuf, buf,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("abcabcXXXXXXXXXXXXX", buf,
         "Null terminator characters from src must not be copied to buf.");
 }
 
