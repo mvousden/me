@@ -71,7 +71,7 @@ void redraw_screen(void)
     vt100_exec(state.vt100Buf);
 
     /* then actual text (so it overlaps the fci) */
-    curLine = state.topLine;
+    curLine = state.buffer.topLine;
     do
     {
         printf("%s\n", curLine->content);  /* a bit crap */

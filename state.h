@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <termios.h>
 
+#include "buffer.h"
 #include "line.h"
 struct MeState
 {
@@ -14,8 +15,7 @@ struct MeState
     FILE* ioFile;
 
     /* Buffer content - both non-NULL in user operation */
-    struct Line* topLine;
-    struct Line* currentLine;
+    struct Buffer buffer;
 
     /* The cursor */
     unsigned short curLine;
@@ -36,5 +36,4 @@ void destroy_state(void);
 void dump_state(FILE* const);
 char* get_cp_at_cursor(void);
 void init_state(const char* const);
-void populate_buffer_from_iofile(void);
 #endif

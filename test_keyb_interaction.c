@@ -36,37 +36,39 @@ void test_char_deletion(void)
         /* Do some deletions and test what comes back */
         TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(delSynonyms[index]),
             "All commands in this test should return 1.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("2", state.topLine->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("2", state.buffer.topLine->content,
             "Deletion must operate on value under cursor.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.topLine->next->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("3",
+            state.buffer.topLine->next->content,
             "Deletion in-line must not affect other lines.");
 
         TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(delSynonyms[index]),
             "All commands in this test should return 1.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.topLine->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.buffer.topLine->content,
             "Deletion must be able to create empty lines.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.topLine->next->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("3",
+            state.buffer.topLine->next->content,
             "Deletion in-line must not affect other lines.");
 
         TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(delSynonyms[index]),
             "All commands in this test should return 1.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.topLine->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.buffer.topLine->content,
             "Deletion must be able to merge lines.");
-        TEST_ASSERT_NULL_MESSAGE(state.topLine->next,
+        TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next,
             "Deletion must remove merged lines.");
 
         TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(delSynonyms[index]),
             "All commands in this test should return 1.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.topLine->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.buffer.topLine->content,
             "Deletion must be able to empty the document.");
-        TEST_ASSERT_NULL_MESSAGE(state.topLine->next,
+        TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next,
             "Deletion must not add lines.");
 
         TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(delSynonyms[index]),
             "All commands in this test should return 1.");
-        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.topLine->content,
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.buffer.topLine->content,
             "Repeated deletions should have no effect once buffer is empty.");
-        TEST_ASSERT_NULL_MESSAGE(state.topLine->next,
+        TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next,
             "Deletion must not add lines.");
     }
 
@@ -78,18 +80,18 @@ void test_char_deletion(void)
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(BACKSPACE),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("12", state.topLine->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("12", state.buffer.topLine->content,
         "Backspace at start of buffer must make no change to current line.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.topLine->next->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("3", state.buffer.topLine->next->content,
         "Backspace at start of buffer must make no change to any line.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('>')),
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(BACKSPACE),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("12", state.topLine->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("12", state.buffer.topLine->content,
         "Backspace in another line must make no change other lines.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.topLine->next->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.buffer.topLine->next->content,
         "Backspace must delete a character when used within a line.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)'3'),
@@ -98,14 +100,14 @@ void test_char_deletion(void)
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(BACKSPACE),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("123", state.topLine->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("123", state.buffer.topLine->content,
         "Backspace must merge lines when deleting at the start of a line.");
-    TEST_ASSERT_NULL_MESSAGE(state.topLine->next,
+    TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next,
         "Backspace must remove merged lines.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(BACKSPACE),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("13", state.topLine->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("13", state.buffer.topLine->content,
         "Backspace must remove characters within a line when used.");
 }
 
@@ -459,7 +461,7 @@ void test_word_movement(void)
 
     /* For sanity, test top line hasn't been modified. */
     TEST_ASSERT_EQUAL_STRING_MESSAGE(caseWordMoveSetupTp,
-                                     state.topLine->content,
+                                     state.buffer.topLine->content,
         "Word hopping must not alter line content.");
 }
 
@@ -474,10 +476,10 @@ void test_hanging_cursor(void)
 
     /* Check line content */
     TEST_ASSERT_EQUAL_STRING_MESSAGE("abc",
-                                     state.topLine->content,
+                                     state.buffer.topLine->content,
         "Top line should remain unaffected by a hanging cursor.");
     TEST_ASSERT_EQUAL_STRING_MESSAGE("de",
-                                     state.topLine->next->content,
+                                     state.buffer.topLine->next->content,
         "Bottom line should remain whole after hanging cursor is used.");
 
     /* Check cursor position */
@@ -500,16 +502,17 @@ void test_line_break(void)
 
     /* Compare the lines we've written, and state 'geometry'. */
     TEST_ASSERT_EQUAL_STRING_MESSAGE(caseLineBreakFirst,
-                                     state.topLine->content,
+                                     state.buffer.topLine->content,
         "First line should contain all characters before the break.");
-    TEST_ASSERT_NOT_NULL_MESSAGE(state.topLine->next,
+    TEST_ASSERT_NOT_NULL_MESSAGE(state.buffer.topLine->next,
         "There should be at least two lines.");
-    TEST_ASSERT_NULL_MESSAGE(state.topLine->next->next,
+    TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next->next,
         "There should not be three lines.");
-    TEST_ASSERT_EQUAL_HEX64_MESSAGE(state.topLine->next, state.currentLine,
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(state.buffer.topLine->next,
+                                    state.buffer.currentLine,
         "The current line should be the second line in the state.");
     TEST_ASSERT_EQUAL_STRING_MESSAGE(caseLineBreakSecond,
-                                     state.topLine->next->content,
+                                     state.buffer.topLine->next->content,
         "Second line should contain all characters after the break.");
 }
 
@@ -524,15 +527,16 @@ void test_visible_chars(void)
 
     /* Compare the line we've written. */
     TEST_ASSERT_EQUAL_STRING_MESSAGE(caseVisibleASCII,
-                                     state.currentLine->content,
+                                     state.buffer.currentLine->content,
         "All of these characters should be type-able and visible natively.");
 
     /* No other lines should exist. */
-    TEST_ASSERT_NULL_MESSAGE(state.topLine->next,
+    TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->next,
         "There should be no more than one line.");
-    TEST_ASSERT_NULL_MESSAGE(state.topLine->prev,
+    TEST_ASSERT_NULL_MESSAGE(state.buffer.topLine->prev,
         "There should be no more than one line.");
-    TEST_ASSERT_EQUAL_HEX64_MESSAGE(state.topLine, state.currentLine,
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(state.buffer.topLine,
+                                    state.buffer.currentLine,
         "The current line should be the top line in the state.");
 }
 

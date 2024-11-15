@@ -15,23 +15,23 @@ int cmd_delete_char(const int cursorOff)
 {
     if (state.curCol + cursorOff < conf.colOffset)  /* Backspace at start */
     {
-        if (!state.currentLine->prev) return 1;  /* Top line */
-        state.curCol = state.currentLine->prev->len + conf.colOffset;
-        state.currentLine = state.currentLine->prev;
-        merge_line_with_next(state.currentLine);
+        if (!state.buffer.currentLine->prev) return 1;  /* Top line */
+        state.curCol = state.buffer.currentLine->prev->len + conf.colOffset;
+        state.buffer.currentLine = state.buffer.currentLine->prev;
+        merge_line_with_next(state.buffer.currentLine);
         state.curLine--;
     }
     else  /* Delete or (backspace not at start) */
     {
         state.curCol += cursorOff;
-        if (state.curCol > state.currentLine->len)  /* Delete at end */
+        if (state.curCol > state.buffer.currentLine->len)  /* Delete at end */
         {
-            if (!state.currentLine->next) return 1;  /* Bottom line */
-            merge_line_with_next(state.currentLine);
+            if (!state.buffer.currentLine->next) return 1;  /* Bottom line */
+            merge_line_with_next(state.buffer.currentLine);
         }
         else  /* Delete not at end, or backspace not at start */
         {
-            delete_char_from_line(state.currentLine,
+            delete_char_from_line(state.buffer.currentLine,
                                   state.curCol - conf.colOffset);
         }
     }
@@ -50,9 +50,9 @@ int cmd_dump_state(void)
 int cmd_insert_char(const unsigned in)
 {
     unsigned short max;
-    insert_char_into_line(state.currentLine, (char)in,
+    insert_char_into_line(state.buffer.currentLine, (char)in,
                           state.curCol - conf.colOffset);
-    max = state.currentLine->len + conf.colOffset;
+    max = state.buffer.currentLine->len + conf.colOffset;
     state.curCol = state.curCol < max ? state.curCol + 1 : max;
     return 1;
 }
@@ -63,11 +63,11 @@ int cmd_move_chars_left(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         if (state.curCol > conf.colOffset) state.curCol--;  /* Within line */
-        else if (state.currentLine->prev)  /* To end of previous line */
+        else if (state.buffer.currentLine->prev)  /* To end of previous line */
         {
-            state.currentLine = state.currentLine->prev;
+            state.buffer.currentLine = state.buffer.currentLine->prev;
             state.curLine--;
-            state.curCol = state.currentLine->len + conf.colOffset;
+            state.curCol = state.buffer.currentLine->len + conf.colOffset;
         }
         else eof = 1; /* Top of file */
     }
@@ -81,11 +81,12 @@ int cmd_move_chars_right(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         /* Within line */
-        if (state.curCol - (size_t)conf.colOffset < state.currentLine->len)
+        if (state.curCol - (size_t)conf.colOffset <
+            state.buffer.currentLine->len)
             state.curCol++;
-        else if (state.currentLine->next)  /* To start of next line */
+        else if (state.buffer.currentLine->next)  /* To start of next line */
         {
-            state.currentLine = state.currentLine->next;
+            state.buffer.currentLine = state.buffer.currentLine->next;
             state.curLine++;
             state.curCol = conf.colOffset;
         }
@@ -111,7 +112,7 @@ int cmd_move_doc_home(void)
 
 int cmd_move_line_end(void)
 {
-    state.curCol = state.currentLine->len + 1;
+    state.curCol = state.buffer.currentLine->len + 1;
     return 1;
 }
 
@@ -125,9 +126,9 @@ int cmd_move_lines_down(unsigned howMany)
 {
     while (howMany--)
     {
-        if (state.currentLine->next)
+        if (state.buffer.currentLine->next)
         {
-            state.currentLine = state.currentLine->next;
+            state.buffer.currentLine = state.buffer.currentLine->next;
             state.curLine++;
         }
         else break;
@@ -139,9 +140,9 @@ int cmd_move_lines_up(unsigned howMany)
 {
     while (howMany--)
     {
-        if (state.currentLine->prev)
+        if (state.buffer.currentLine->prev)
         {
-            state.currentLine = state.currentLine->prev;
+            state.buffer.currentLine = state.buffer.currentLine->prev;
             state.curLine--;
         }
         else break;
@@ -195,7 +196,7 @@ int cmd_move_word_right(void){return cmd_move_word(1);}
  * characters are written. */
 int cmd_save_file(void)
 {
-    struct Line* writeLine = state.topLine;
+    struct Line* writeLine = state.buffer.topLine;
     char newl = '\n';
     FILE* const out = fopen(state.filePath, "w");
     if (!out) err("cmd_save_file/fopen");
@@ -215,10 +216,11 @@ int cmd_save_file(void)
 
 int cmd_split_line(const char ws, const unsigned wsCount)
 {
-    split_line(state.currentLine, state.curCol - conf.colOffset, ws, wsCount);
+    split_line(state.buffer.currentLine,
+               state.curCol - conf.colOffset, ws, wsCount);
     state.curCol = conf.colOffset + wsCount;
     state.curLine++;
-    state.currentLine = state.currentLine->next;
+    state.buffer.currentLine = state.buffer.currentLine->next;
     return 1;
 }
 
