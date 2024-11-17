@@ -81,10 +81,15 @@ void init_state(const char* const filePath)
         fclose(fopen(filePath, "a"));  /* Create if not exist. */
         if (!(state.ioFile = fopen(filePath, "r+"))) err("init_state/fopen");
     }
+
+    /* Storing the path to the file. */
+    if (filePath &&
+        !(state.filePath = calloc(strlen(filePath) + 1, sizeof(char))))
+        err("init_state (OOM)");
     if (filePath) strcpy(state.filePath, filePath);
 
     /* Various setup */
-    init_buffer(&state.buffer, filePath);
+    init_buffer(&state.buffer);
     state.vt100Buf = malloc(sizeof(char) * conf.vt100BufSize);
     state.curCol = conf.colOffset;
     state.curLine = conf.lineOffset;

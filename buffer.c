@@ -14,12 +14,10 @@ void destroy_buffer_content(struct Buffer* const buffer)
     destroy_line_cascade(buffer->topLine);
 }
 
-void init_buffer(struct Buffer* const buffer, const char* const filePath)
+void init_buffer(struct Buffer* const buffer)
 {
-    /* Memory */
-    if (!(buffer->topLine = malloc(sizeof(struct Line))) ||
-        (filePath &&
-         !(state.filePath = calloc(strlen(filePath) + 1, sizeof(char)))))
+    /* Something to start from */
+    if (!(buffer->topLine = malloc(sizeof(struct Line))))
         err("init_buffer (OOM)");
 
     /* Other setup */
@@ -43,9 +41,8 @@ void populate_buffer_from_iofile(struct Buffer* const buffer,
     do  /* Reading the entire file on a per-chunk basis. */
     {
         /* Get the chunk */
-        itRead = fread(readBuf, sizeof(char), conf.openChunkSize,
-                       state.ioFile);
-        if (ferror(state.ioFile))
+        itRead = fread(readBuf, sizeof(char), conf.openChunkSize, ioFile);
+        if (ferror(ioFile))
         {
             free(readBuf);  /* Courtesy */
             err("populate_buffer_from_iofile/fread");
@@ -79,7 +76,7 @@ void populate_buffer_from_iofile(struct Buffer* const buffer,
                      * (except EOF and \n obviously). */
         }
     }
-    while (!feof(state.ioFile));
+    while (!feof(ioFile));
     /* Need to set an end to the final line */
     buffer->currentLine->len = lineWritten;
     /* Editing experience starts at the top of the file, though note that we

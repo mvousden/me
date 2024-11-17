@@ -5,7 +5,6 @@
 #include <termios.h>
 
 #include "buffer.h"
-#include "line.h"
 struct MeState
 {
     struct termios termiosOld;
@@ -17,7 +16,7 @@ struct MeState
     /* Buffer content - both non-NULL in user operation */
     struct Buffer buffer;
 
-    /* The cursor */
+    /* Location of the cursor on the terminal */
     unsigned short curLine;
     unsigned short curCol;
 
