@@ -1,3 +1,5 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mvousden/me/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mvousden/me/tree/master)
+
 Mark's Editor
 ===
 
