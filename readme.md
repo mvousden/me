@@ -50,6 +50,8 @@ What it can't do, that Mark would like it to do
  - Handle long lines sensibly, either by wrapping or truncating
  - Whitespace-aware newline by e.g. following the indentation of the previous
    line.
+ - Handle window resizing elegantly, i.e. if the cursor goes off-screen after a
+   resize, the display should scroll.
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut
