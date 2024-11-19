@@ -6,7 +6,8 @@ CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3
 SANITIZEFLAGS = #-fsanitize=address -fsanitize=undefined
 DEBUGFLAGS = -g3 -O0 $(SANITIZEFLAGS)
 LDLIBS =
-OBJ = buffer.o cmds.o conf.o error.o helpers.o keyb.o line.o state.o term.o
+OBJ = buffer.o cmds.o conf.o cursor.o error.o helpers.o keyb.o line.o state.o \
+    term.o
 EXEC_DIR = exec
 TESTS = $(patsubst test_%.c, test_%, $(filter test_%.c, $(shell ls)))
 TEST_PATHS = $(patsubst test_%, $(EXEC_DIR)/test_%, $(TESTS))

@@ -5,28 +5,21 @@
 #include <termios.h>
 
 #include "buffer.h"
+#include "cursor.h"
 struct MeState
 {
-    struct termios termiosOld;
+    /* Aggregators */
+    struct Buffer buffer;
+    struct Cursor cursor;
+    struct termios termiosOld;  /* Not one of mine */
 
     /* File I/O */
     char* filePath;
     FILE* ioFile;
 
-    /* Buffer content - both non-NULL in user operation */
-    struct Buffer buffer;
-
-    /* Location of the cursor on the terminal */
-    unsigned short curLine;
-    unsigned short curCol;
-
     /* Fill column indicator */
     char* fciStr;
     size_t fciStrLen;
-
-    /* Terminal dimensions */
-    unsigned short termLines;
-    unsigned short termCols;
 
     /* vt100 buffer, used for buffering command sequences */
     char* vt100Buf;

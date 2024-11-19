@@ -30,7 +30,7 @@ char* stage_draw_fci(char* const buf)
 {
     unsigned short line;
     char* slidingBuf = buf;  /* Sliding buffer */
-    if (conf.fciCol < state.termCols)
+    if (conf.fciCol < state.cursor.maxCol)
     {
         /* Precomputing: stored persistently across drawings */
         if (!state.fciStr)
@@ -45,7 +45,7 @@ char* stage_draw_fci(char* const buf)
 
         /* Staging movements and drawings to buffer */
         slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, 0, conf.fciCol);
-        for (line = 0; line <= state.termLines; line++)
+        for (line = 0; line <= state.cursor.maxLine; line++)
         {
             slidingBuf = slide_copy(state.fciStr, slidingBuf);
             slidingBuf = slide_copy(VT100_CURSOR_DN, slidingBuf);
@@ -81,8 +81,8 @@ void redraw_screen(void)
 
     /* reset the cursor */
     slidingBuf = state.vt100Buf;
-    slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, state.curLine,
-                                         state.curCol);
+    slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, state.cursor.curLine,
+                                         state.cursor.curCol);
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
@@ -111,14 +111,14 @@ void term_setup(void)
         err("term_setup/tcsetattr");
 }
 
-/* Using ioctl, placing value into state struct */
+/* Using ioctl, placing value into cursor struct */
 void update_window_size(void)
 {
     struct winsize ioctlOut;
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ioctlOut))
         err("update_window_size/ioctl(TIOCGWINSZ)");
-    state.termLines = ioctlOut.ws_row;
-    state.termCols = ioctlOut.ws_col;
+    /* <!> Check rc */
+    update_cursor_max_bounds(&state.cursor, ioctlOut.ws_row, ioctlOut.ws_col);
 }
 
 #undef _DEFAULT_SOURCE

@@ -41,10 +41,12 @@ void dump_state(FILE* const out)
             "me_dump\n"
             "File Path: %s\n"
             "Current line / line count: %zu/%zu\n"
-            "Cursor line, cursor column: %u,%u\n",
+            "Cursor line, cursor column: %u,%u\n"
+            "Terminal size (cols x lines): %u x %u\n",
             state.filePath,
             currentLine, totalLines,
-            state.curLine, state.curCol);
+            state.cursor.curLine, state.cursor.curCol,
+            state.cursor.maxCol, state.cursor.maxLine);
 
     /* Each line: the entire contents of the buffer including 0. Lines begin
      * with 'L<NUM>:<LEN>:<SIZE>:', where:
@@ -69,7 +71,8 @@ void dump_state(FILE* const out)
 
 char* get_cp_at_cursor(void)
 {
-    return state.buffer.currentLine->content + state.curCol - conf.colOffset;
+    return state.buffer.currentLine->content + state.cursor.curCol -
+        conf.colOffset;
 }
 
 void init_state(const char* const filePath)
@@ -90,9 +93,9 @@ void init_state(const char* const filePath)
 
     /* Various setup */
     init_buffer(&state.buffer);
+    init_cursor(&state.cursor, conf.lineOffset, conf.colOffset,
+                conf.lineOffset, conf.colOffset);
     state.vt100Buf = malloc(sizeof(char) * conf.vt100BufSize);
-    state.curCol = conf.colOffset;
-    state.curLine = conf.lineOffset;
 
     /* Get all text from file and load it into line datastructure. */
     if (filePath) populate_buffer_from_iofile(&state.buffer, state.ioFile);
