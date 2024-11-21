@@ -1,6 +1,8 @@
+#include "conf.h"
 #include "cursor.h"
 #include "state.h"
 
+extern struct MeConf conf;
 extern struct MeState state;
 
 /* These int functions return 0 if the cursor remains in-bounds, and 1
@@ -17,6 +19,13 @@ int cursor_lt(struct Cursor* const restrict c)
 {return c->curCol--, cursor_oob_check(c);}
 int cursor_rt(struct Cursor* const restrict c)
 {return c->curCol++, cursor_oob_check(c);}
+int cursor_eol(struct Cursor* const restrict c,
+               const struct Line* const restrict l)
+{return c->curCol = l->len + conf.colOffset, cursor_oob_check(c);}
+/* No return, because it must be in-bounds by definition. */
+void cursor_sol(struct Cursor* const restrict c)
+{c->curCol = conf.colOffset;}
+
 
 void init_cursor(struct Cursor* const restrict c,
                  const unsigned short curLine,
