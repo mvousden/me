@@ -22,8 +22,9 @@ int cursor_rt(struct Cursor* const restrict c)
 int cursor_eol(struct Cursor* const restrict c,
                const struct Line* const restrict l)
 {return c->curCol = l->len + conf.colOffset, cursor_oob_check(c);}
-int cursor_sol(struct Cursor* const restrict c)
-{return c->curCol = conf.colOffset, cursor_oob_check(c);}
+/* No return, because it must be in-bounds by definition. */
+void cursor_sol(struct Cursor* const restrict c)
+{c->curCol = conf.colOffset;}
 
 
 void init_cursor(struct Cursor* const restrict c,

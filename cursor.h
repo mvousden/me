@@ -24,7 +24,7 @@ int cursor_rt(struct Cursor* const);
 
 /* Line cursor movement operations */
 int cursor_eol(struct Cursor* const, const struct Line* const);
-int cursor_sol(struct Cursor* const);
+void cursor_sol(struct Cursor* const);
 
 int cursor_oob_check(struct Cursor* const);
 void init_cursor(struct Cursor* const, const unsigned short,

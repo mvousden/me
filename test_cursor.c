@@ -97,8 +97,7 @@ void test_line_cursor_motion(void)
     update_cursor_max_bounds(&c, 80, 80);
 
     /* sol->sol shouldn't move */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_sol(&c),
-        "Cursor must be in bounds if line is short when 'sol' is commanded.");
+    cursor_sol(&c);
     TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, c.curLine,
         "Cursor must not line-hop when 'sol' is commanded.");
     TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, c.curCol,
@@ -123,8 +122,7 @@ void test_line_cursor_motion(void)
         "line.");
 
     /* eol->sol should move to start of line */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_sol(&c),
-        "Cursor must be in bounds if line is short when 'sol' is commanded.");
+    cursor_sol(&c);
     TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, c.curLine,
         "Cursor must not line-hop when 'sol' is commanded.");
     TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, c.curCol,
