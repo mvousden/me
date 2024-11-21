@@ -118,13 +118,13 @@ int cmd_move_doc_home(void)
 
 int cmd_move_line_end(void)
 {
-    state.cursor.curCol = state.buffer.currentLine->len + 1;
+    cursor_eol(&state.cursor, state.buffer.currentLine);
     return 1;
 }
 
 int cmd_move_line_home(void)
 {
-    state.cursor.curCol = conf.colOffset;
+    cursor_sol(&state.cursor);
     return 1;
 }
 
