@@ -15,17 +15,17 @@ void test_elementary_cursor_motion(void)
     struct Cursor c;
     init_cursor(&c);
     warp_cursor(&c, 1, 1);
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, update_cursor_max_bounds(&c, 80, 80),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 80, 80),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* Single-movement */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_rt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_rt(&c),
         "'Right' cursor movement must return 0 when not out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_dn(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_dn(&c),
         "'Down' cursor movement must return 0 when not out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_lt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_lt(&c),
         "'Left' cursor movement must return 0 when not out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_up(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_up(&c),
         "'Up' cursor movement must return 0 when not out of bounds.");
 }
 
@@ -36,28 +36,28 @@ void test_elementary_cursor_oob(void)
     init_cursor(&c);
 
     /* Weird upper bounds, but still okay. */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, update_cursor_max_bounds(&c, 0, 0),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 0, 0),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* Alternating 1 and 0 cases, moving outside the bounding box */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, cursor_dn(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_dn(&c),
         "'Down' cursor movement must return 1 when out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_up(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_up(&c),
         "'Up' cursor movement must return 0 when returning to bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, cursor_rt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_rt(&c),
         "'Right' cursor movement must return 1 when out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_lt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_lt(&c),
         "'Left' cursor movement must return 0 when returning to bounds.");
 
     /* The other corner, negative co-ordinates. */
     init_cursor(&c);
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, cursor_up(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_up(&c),
         "'Up' cursor movement must return 1 when out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_dn(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_dn(&c),
         "'Down' cursor movement must return 0 when returning to bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, cursor_lt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_lt(&c),
         "'Left' cursor movement must return 1 when out of bounds.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_rt(&c),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_rt(&c),
         "'Right' cursor movement must return 0 when returning to bounds.");
 }
 
@@ -95,7 +95,7 @@ void test_line_cursor_motion_checks(void)
         "line.");
 
     /* sol->eol should move to end of line */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_eol(&c, l),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_eol(&c, l),
         "Cursor must be in bounds if line is short when 'eol' is commanded.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, c.curLine,
         "Cursor must not line-hop when 'eol' is commanded.");
@@ -105,7 +105,7 @@ void test_line_cursor_motion_checks(void)
         "Cursor must move to end of line when 'eol' is commanded.");
 
     /* eol->eol shouldn't move */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_eol(&c, l),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_eol(&c, l),
         "Cursor must be in bounds if line is short when 'eol' is commanded.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, c.curLine,
         "Cursor must not line-hop when 'eol' is commanded.");
@@ -126,7 +126,7 @@ void test_line_cursor_motion_checks(void)
     c.curCol = 999;
     TEST_ASSERT_MESSAGE(is_cursor_eol(&c, l),
         "Hanging cursor counts as being 'eol'.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, cursor_eol(&c, l),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_eol(&c, l),
         "Cursor must be in bounds if line is short when 'eol' is commanded.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, c.curLine,
         "Cursor must not line-hop when 'eol' is commanded.");
@@ -160,7 +160,7 @@ void test_line_cursor_oob(void)
     TEST_ASSERT_GREATER_THAN(1, l->len);  /* Test setup */
 
     /* eol should move us out of bounds */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, cursor_eol(&c, l),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_eol(&c, l),
         "Cursor is out of bounds when 'eol' is commanded if line is too long "
         "to handle.");
 }
@@ -171,14 +171,15 @@ void test_update_oob(void)
     struct Cursor c;
     init_cursor(&c);
     /* Weird initial value */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, warp_cursor(&c, 6, 7),
-        "Warping cursor must return 1 if the bounds are not defined.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, 6, 7),
+        "Warping cursor must return 1 if the bounds are not defined, and "
+        "the destination is not the origin.");
 
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(0, update_cursor_max_bounds(&c, 6, 7),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 6, 7),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* An oob update */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(1, update_cursor_max_bounds(&c, 1, 1),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, update_cursor_max_bounds(&c, 1, 1),
         "Update must return 1 if the cursor is now out of bounds.");
 }
 
