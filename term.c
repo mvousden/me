@@ -81,8 +81,9 @@ void redraw_screen(void)
 
     /* reset the cursor */
     slidingBuf = state.vt100Buf;
-    slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, state.cursor.curLine,
-                                         state.cursor.curCol);
+    slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
+        state.cursor.curLine + conf.lineOffset,
+        state.cursor.curCol + conf.colOffset);
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
