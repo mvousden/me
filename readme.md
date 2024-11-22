@@ -60,6 +60,9 @@ What it can't do, that Mark would like it to do
  - Whitespace-clearing shortcuts
  - Word-wrap mechanism (e.g. M-q (emacs))
  - Save written text to a particular path
+ - Be demonstrably performant - the data structure for holding text is
+   suboptimal, perhaps a gap buffer structure on a per-line basis would be more
+   effective.
  - Unit tests for saving and opening
  - Dumb search and replace
  - Regex search and replace (using a convenient regex library)
