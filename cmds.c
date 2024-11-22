@@ -17,7 +17,7 @@ int cmd_delete_char(const int cursorOff)
     if (state.cursor.curCol + cursorOff < 0)
     {
         if (!state.buffer.currentLine->prev) return 1;  /* Top line */
-        state.cursor.curCol = state.buffer.currentLine->prev->len;
+        warp_cursor_col(&state.cursor, state.buffer.currentLine->prev->len);
         state.buffer.currentLine = state.buffer.currentLine->prev;
         merge_line_with_next(state.buffer.currentLine);
         cursor_up(&state.cursor);
@@ -51,12 +51,13 @@ int cmd_dump_state(void)
 
 int cmd_insert_char(const unsigned in)
 {
-    unsigned short max;
     insert_char_into_line(state.buffer.currentLine, (char)in,
                           state.cursor.curCol);
-    max = state.buffer.currentLine->len;
-    state.cursor.curCol = state.cursor.curCol < max ?
-        state.cursor.curCol + 1 : max;
+    if (!is_cursor_eol(&state.cursor, state.buffer.currentLine))
+        cursor_rt(&state.cursor);
+    /* Hanging cursor must snap to the end of the line when used -
+     * is_cursor_eol returns true also when the cursor is hanging. */
+    else cursor_eol(&state.cursor, state.buffer.currentLine);
     return 1;
 }
 
@@ -71,7 +72,7 @@ int cmd_move_chars_left(unsigned howMany, unsigned* const isEof)
         {
             state.buffer.currentLine = state.buffer.currentLine->prev;
             cursor_up(&state.cursor);
-            state.cursor.curCol = state.buffer.currentLine->len;
+            cursor_eol(&state.cursor, state.buffer.currentLine);
         }
         else eof = 1; /* Top of file */
     }
@@ -220,7 +221,7 @@ int cmd_save_file(void)
 int cmd_split_line(const char ws, const unsigned wsCount)
 {
     split_line(state.buffer.currentLine, state.cursor.curCol, ws, wsCount);
-    state.cursor.curCol = wsCount;
+    warp_cursor_col(&state.cursor, wsCount);
     cursor_dn(&state.cursor);
     state.buffer.currentLine = state.buffer.currentLine->next;
     return 1;
