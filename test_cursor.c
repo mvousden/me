@@ -183,6 +183,83 @@ void test_update_oob(void)
         "Update must return 1 if the cursor is now out of bounds.");
 }
 
+/* Warp tests, setting co-ordinates in bounds and oob. */
+void test_warp_oob(void)
+{
+    struct Cursor c;
+    init_cursor(&c);
+    const short bound = 80;
+
+    /* Column moves */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, bound, bound),
+        "Update must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, bound),
+        "Warp-col must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, 0),
+        "Warp-col must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, -1),
+        "Warp-col must return 1 if the cursor is out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, bound + 1),
+        "Warp-col must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, bound),
+        "Warp-col must return 0 if the cursor is still in-bounds.");
+
+    /* Line moves */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_line(&c, bound),
+        "Warp-line must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_line(&c, 0),
+        "Warp-line must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, -1),
+        "Warp-line must return 1 if the cursor is out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, bound + 1),
+        "Warp-line must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_line(&c, bound),
+        "Warp-line must return 0 if the cursor is still in-bounds.");
+
+    /* Col moves when line is oob */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, bound + 1),
+        "Warp-line must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, 0),
+        "Warp-col must return 1 if the cursor is out of line bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_line(&c, 0),
+        "Warp-line must return 0 if the cursor returns in-bounds.");
+
+    /* Line moves when col is oob */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, bound + 1),
+        "Warp-col must return 0 if the cursor is still in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, 0),
+        "Warp-line must return 1 if the cursor is out of col bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, 0),
+        "Warp-col must return 0 if the cursor returns in-bounds.");
+
+    /* Full warps */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, 0, 0),
+        "Warp must return 0 if the cursor remains in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, bound, 0),
+        "Warp must return 0 if the cursor remains in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, 0, bound),
+        "Warp must return 0 if the cursor remains in-bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, bound, bound),
+        "Warp must return 0 if the cursor remains in-bounds.");
+
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, -1, 0),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, 0, -1),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, -1, bound),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound, -1),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound + 1, 0),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, 0, bound + 1),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound + 1, bound),
+        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound, bound + 1),
+        "Warp must return 1 if the cursor moves out of bounds.");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -191,5 +268,6 @@ int main(void)
     RUN_TEST(test_line_cursor_motion_checks);
     RUN_TEST(test_line_cursor_oob);
     RUN_TEST(test_update_oob);
+    RUN_TEST(test_warp_oob);
     return UNITY_END();
 }
