@@ -163,6 +163,8 @@ void test_line_cursor_oob(void)
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_eol(&c, l),
         "Cursor is out of bounds when 'eol' is commanded if line is too long "
         "to handle.");
+
+    destroy_line(l);
 }
 
 /* Placing the cursor out of bounds by moving the upper bounds. */
