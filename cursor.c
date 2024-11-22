@@ -1,7 +1,4 @@
 #include "cursor.h"
-#include "state.h"
-
-extern struct MeState state;
 
 /* These int functions return 0 if the cursor remains in-bounds, and 1
  * otherwise, regardless of where the cursor starts. If this value is not
@@ -37,8 +34,8 @@ int warp_cursor(struct Cursor* const restrict c, const short curLine,
 
 int cursor_oob_check(struct Cursor* const restrict c)
 {
-    return (c->curLine > c->maxLine || c->curLine < 0 ||
-            c->curCol > c->maxCol || c->curCol < 0);
+    return c->curLine > c->maxLine || c->curLine < 0 ||
+           c->curCol > c->maxCol || c->curCol < 0;
 }
 
 int update_cursor_max_bounds(struct Cursor* const restrict c,
