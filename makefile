@@ -36,7 +36,8 @@ exec_tests: test $(TEST_OUTPUTS_DIR)
 		RESULT_VG_LOG_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt"; \
 		RESULT_JUNIT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_junit.xml"; \
 		printf "Running $${TEST}..."; \
-		valgrind --log-file="$$RESULT_VG_LOG_PATH" "$(EXEC_DIR)/$$TEST" \
+		valgrind --error-exitcode=7 \
+			--log-file="$$RESULT_VG_LOG_PATH" "$(EXEC_DIR)/$$TEST" \
 			> "$$RESULT_TXT_PATH"; \
 		ERR=$$?; \
 		ruby "$(UNITY_OUTPUT_PARSER)" -xml "$$RESULT_TXT_PATH" > /dev/null; \
