@@ -14,11 +14,10 @@ extern struct MeConf conf;
 int cmd_delete_char(const int cursorOff)
 {
     /* Backspace at start */
-    if (state.cursor.curCol + cursorOff < conf.colOffset)
+    if (state.cursor.curCol + cursorOff < 0)
     {
         if (!state.buffer.currentLine->prev) return 1;  /* Top line */
-        state.cursor.curCol = state.buffer.currentLine->prev->len +
-            conf.colOffset;
+        state.cursor.curCol = state.buffer.currentLine->prev->len;
         state.buffer.currentLine = state.buffer.currentLine->prev;
         merge_line_with_next(state.buffer.currentLine);
         cursor_up(&state.cursor);
@@ -27,7 +26,7 @@ int cmd_delete_char(const int cursorOff)
     {
         state.cursor.curCol += cursorOff;
         /* Delete at end */
-        if (state.cursor.curCol > state.buffer.currentLine->len)
+        if (is_cursor_eol(&state.cursor, state.buffer.currentLine))
         {
             if (!state.buffer.currentLine->next) return 1;  /* Bottom line */
             merge_line_with_next(state.buffer.currentLine);
@@ -35,7 +34,7 @@ int cmd_delete_char(const int cursorOff)
         else  /* Delete not at end, or backspace not at start */
         {
             delete_char_from_line(state.buffer.currentLine,
-                                  state.cursor.curCol - conf.colOffset);
+                                  state.cursor.curCol);
         }
     }
     return 1;
@@ -54,8 +53,8 @@ int cmd_insert_char(const unsigned in)
 {
     unsigned short max;
     insert_char_into_line(state.buffer.currentLine, (char)in,
-                          state.cursor.curCol - conf.colOffset);
-    max = state.buffer.currentLine->len + conf.colOffset;
+                          state.cursor.curCol);
+    max = state.buffer.currentLine->len;
     state.cursor.curCol = state.cursor.curCol < max ?
         state.cursor.curCol + 1 : max;
     return 1;
@@ -67,13 +66,12 @@ int cmd_move_chars_left(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         /* Within line */
-        if (state.cursor.curCol > conf.colOffset) cursor_lt(&state.cursor);
+        if (state.cursor.curCol > 0) cursor_lt(&state.cursor);
         else if (state.buffer.currentLine->prev)  /* To end of previous line */
         {
             state.buffer.currentLine = state.buffer.currentLine->prev;
             cursor_up(&state.cursor);
-            state.cursor.curCol = state.buffer.currentLine->len +
-                conf.colOffset;
+            state.cursor.curCol = state.buffer.currentLine->len;
         }
         else eof = 1; /* Top of file */
     }
@@ -87,14 +85,13 @@ int cmd_move_chars_right(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         /* Within line */
-        if (state.cursor.curCol - (size_t)conf.colOffset <
-            state.buffer.currentLine->len)
+        if (state.cursor.curCol < (short)state.buffer.currentLine->len)
             cursor_rt(&state.cursor);
         else if (state.buffer.currentLine->next)  /* To start of next line */
         {
             state.buffer.currentLine = state.buffer.currentLine->next;
             cursor_dn(&state.cursor);
-            state.cursor.curCol = conf.colOffset;
+            cursor_sol(&state.cursor);
         }
         else eof = 1; /* Bottom of file */
     }
@@ -170,7 +167,7 @@ int cmd_move_word(const unsigned isRight)
      *    is not part of a word). */
     c = get_cp_at_cursor();
     if (!isRight && is_alphanum(*c) &&
-        (state.cursor.curCol == conf.colOffset || !is_alphanum(*(c-1))))
+        (is_cursor_sol(&state.cursor) || !is_alphanum(*(c-1))))
     {
         move_char(0, &eof);
         if (eof) return 1;  /* Start of document, shortcut */
@@ -222,9 +219,8 @@ int cmd_save_file(void)
 
 int cmd_split_line(const char ws, const unsigned wsCount)
 {
-    split_line(state.buffer.currentLine,
-               state.cursor.curCol - conf.colOffset, ws, wsCount);
-    state.cursor.curCol = conf.colOffset + wsCount;
+    split_line(state.buffer.currentLine, state.cursor.curCol, ws, wsCount);
+    state.cursor.curCol = wsCount;
     cursor_dn(&state.cursor);
     state.buffer.currentLine = state.buffer.currentLine->next;
     return 1;

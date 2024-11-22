@@ -4,13 +4,11 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "conf.h"
 #include "keyb.h"
 #include "keyb_defs.h"
 #include "state.h"
 #include "unity.h"
 
-extern struct MeConf conf;
 extern struct MeState state;
 
 void setUp(void)
@@ -129,110 +127,110 @@ void test_char_movement(void)
     /* Line home and end, with repeats */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)NAV_HOME),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "nav_home column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "nav_home line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)NAV_HOME),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "nav_home column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "nav_home line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)NAV_END),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "nav_end column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "nav_end line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)NAV_END),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "nav_end column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "nav_end line test failed.");
 
     /* CTRL-equivalents to nav_home and nav_end */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('a')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "C-a column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-a line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('a')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "C-a column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-a line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('e')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-e column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-e line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('e')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-e column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-e line test failed.");
 
     /* Doc home and doc end in the same way, with repeats. */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('<')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "M-< column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "M-< line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('<')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "M-< column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "M-< line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('>')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "M-> column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "M-> line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('>')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "M-> column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "M-> line test failed.");
 
     /* Arrow keys */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_LF),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 2, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curCol,
         "Left-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "Left-arrow line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_RT),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "Right-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "Right-arrow line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_UP),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "Up-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "Up-arrow line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_DN),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "Down-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "Down-arrow line test failed.");
 
     /* Arrow key edge cases */
@@ -240,29 +238,29 @@ void test_char_movement(void)
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_LF),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "Left-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "Left-arrow line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_RT),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Right-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "Right-arrow line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_DN),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Down-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "Down-arrow line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('<')),
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ARR_UP),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Up-arrow column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Up-arrow line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('>')),
@@ -270,30 +268,30 @@ void test_char_movement(void)
     /* CTRL-equivalents to arrow keys */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 2, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curCol,
         "C-b column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-b line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-f column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-f line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('p')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-p column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "C-p line test failed.");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('n')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-n column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-n line test failed.");
 
     /* CTRL-equivalent edge cases */
@@ -301,29 +299,29 @@ void test_char_movement(void)
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 3, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(3, state.cursor.curCol,
         "C-b column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "C-b line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "C-f column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-f line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('n')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "C-n column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 2, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curLine,
         "C-n line test failed.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('<')),
         "All commands in this test should return 1.");
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)CTRL_('p')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "C-p column test failed.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "C-p line test failed.");
 }
 
@@ -360,108 +358,108 @@ void test_word_movement(void)
     /* Hop forward and check each jump. */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 6, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(6, state.cursor.curCol,
         "Forward hop 1 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Forward hop 1 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 12, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(12, state.cursor.curCol,
         "Forward hop 2 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Forward hop 2 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 21, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(21, state.cursor.curCol,
         "Forward hop 3 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Forward hop 3 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 25, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(25, state.cursor.curCol,
         "Forward hop 4 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Forward hop 4 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 36, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(36, state.cursor.curCol,
         "Forward hop 5 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "Forward hop 5 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 1, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curCol,
         "Forward hop 6 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 4, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(4, state.cursor.curLine,
         "Forward hop 6 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('f')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 1, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curCol,
         "Forward hop 7 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 5, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(5, state.cursor.curLine,
         "Forward hop 7 failed (line).");
 
     /* Hop backward and check each jump. */
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Backward hop 1 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 4, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(4, state.cursor.curLine,
         "Backward hop 1 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Backward hop 2 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "Backward hop 2 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 22, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(22, state.cursor.curCol,
         "Backward hop 3 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 3 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 13, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(13, state.cursor.curCol,
         "Backward hop 4 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 4 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 7, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(7, state.cursor.curCol,
         "Backward hop 5 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 5 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 1, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curCol,
         "Backward hop 6 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 6 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Backward hop 7 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 7 failed (line).");
 
     TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('b')),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curCol,
         "Backward hop 8 failed (col).");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, state.cursor.curLine,
         "Backward hop 8 failed (line).");
 
     /* For sanity, test top line hasn't been modified. */
@@ -488,9 +486,9 @@ void test_hanging_cursor(void)
         "Bottom line should remain whole after hanging cursor is used.");
 
     /* Check cursor position */
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.lineOffset + 1, state.cursor.curLine,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
         "Hanging cursor should end on bottom line when used.");
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(conf.colOffset + 2, state.cursor.curCol,
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curCol,
         "Hanging cursor must be at the end of the line when used.");
 }
 
