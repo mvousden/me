@@ -36,7 +36,7 @@ exec_tests: test $(TEST_OUTPUTS_DIR)
 		RESULT_VG_LOG_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_vg_out.txt"; \
 		RESULT_JUNIT_PATH="$(TEST_OUTPUTS_DIR)/$${TEST}_junit.xml"; \
 		printf "Running $${TEST}..."; \
-		valgrind --error-exitcode=7 \
+		valgrind --error-exitcode=7 --leak-check=full \
 			--log-file="$$RESULT_VG_LOG_PATH" "$(EXEC_DIR)/$$TEST" \
 			> "$$RESULT_TXT_PATH"; \
 		ERR=$$?; \
