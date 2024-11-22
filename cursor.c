@@ -31,8 +31,14 @@ int cursor_oob_check(struct Cursor* const restrict c)
            c->curCol > c->maxCol || c->curCol < 0;
 }
 
+/* Doesn't use warp, avoids unused variable mistakes. */
 void init_cursor(struct Cursor* const restrict c)
-{warp_cursor(c, 0, 0);}  /* return optimised out */
+{
+    c->curLine = 0;
+    c->curCol = 0;
+    c->maxLine = 0;
+    c->maxCol = 0;
+}
 int update_cursor_max_bounds(struct Cursor* const restrict c,
                              const short maxLine, const short maxCol)
 {return c->maxLine = maxLine, c->maxCol = maxCol, cursor_oob_check(c);}
