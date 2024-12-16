@@ -543,6 +543,63 @@ void test_visible_chars(void)
         "The current line should be the top line in the state.");
 }
 
+const int caseWhitespaceZap[] = {' ', 'a', CTRL_('m'),
+    ' ', ' ', 'b', CTRL_('m'),
+    'c', CTRL_('m'),
+    'd', ' ', CTRL_('m'),
+    'e', ' ', CTRL_('m'),
+    'a', 'p', 'p', ' ', ' ', ' ', 'l', 'e', ' ',
+    ALT_('<'),
+    ALT_('\\'), CTRL_('n'),
+    ALT_('\\'), CTRL_('n'),
+    ALT_('\\'), CTRL_('n'),
+    ALT_('\\'), CTRL_('n'),
+    CTRL_('f'), ALT_('\\'), CTRL_('n'),
+    ALT_('f'), ALT_('\\'),
+    ALT_('<'), 0};
+void test_whitespace_zap(void)
+{
+    /* Type the chars. */
+    const int* restrict c = caseWhitespaceZap;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check all lines with what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("a",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should trim whitespace from the cursor.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("b",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should trim all whitespace from the cursor.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("c",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should do nothing when there is no whitespace to trim.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("d ",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should leave whitespace after the trim.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("e",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should trim even when not at the start of a line.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("apple ",
+                                     state.buffer.currentLine->content,
+        "Alt-\\ should trim multiple spaces.");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -552,5 +609,6 @@ int main(void)
     RUN_TEST(test_word_movement);
     RUN_TEST(test_char_deletion);
     RUN_TEST(test_hanging_cursor);
+    RUN_TEST(test_whitespace_zap);
     return UNITY_END();
 }
