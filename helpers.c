@@ -50,6 +50,8 @@ int is_alphanum(const char c)
             (c > 0x60 && c < 0x7b));   /* lower-case */
 }
 
+int is_space(const char c){return c == 0x20;}
+
 /* Dirty string copying function that copies NULL-terminated src to buf, then
  * returns a pointer one character off the end of buf. Does no checking of any
  * kind, and does not NULL-terminate the buffer (really). */

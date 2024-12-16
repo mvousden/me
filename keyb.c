@@ -108,6 +108,8 @@ int proc_key(const unsigned key)
         return cmd_move_word_right();
     case ALT_('b'):
         return cmd_move_word_left();
+    case ALT_('\\'):
+        return cmd_zap_whitespace();
     default:
         if (IS_PRINTABLE(key)) return cmd_insert_char(key);
         else return 1;

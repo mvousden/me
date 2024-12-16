@@ -17,6 +17,7 @@ int cmd_move_word_right(void);
 int cmd_save_file(void);
 int cmd_split_line(const char, const unsigned);
 int cmd_quit(void);
+int cmd_zap_whitespace(void);
 
 int move_char(const unsigned, unsigned* const);
 #endif

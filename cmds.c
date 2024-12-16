@@ -229,6 +229,13 @@ int cmd_split_line(const char ws, const unsigned wsCount)
 
 int cmd_quit(void){return 0;}
 
+int cmd_zap_whitespace(void)
+{
+    while (is_space(*get_cp_at_cursor()))
+        delete_char_from_line(state.buffer.currentLine, state.cursor.curCol);
+    return 1;
+}
+
 /* Convenience */
 int move_char(const unsigned isRight, unsigned* const isEof)
 {

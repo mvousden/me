@@ -57,7 +57,6 @@ What it can't do, that Mark would like it to do
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut
- - Whitespace-clearing shortcuts
  - Word-wrap mechanism (e.g. M-q (emacs))
  - Save written text to a particular path
  - Be demonstrably performant - the data structure for holding text is
@@ -92,6 +91,7 @@ Keyboard shortcuts, in emacs-ese
  - C-M-s: state dump to fixed path
  - M-</M->: move cursor to start/end of document
  - M-f/M-b: move cursor to end/start of next/previous word
+ - M-\: delete all space (ascii 0x20) from this cursor until the next character
 
 Not bugs
 ===
