@@ -58,6 +58,7 @@ char* stage_draw_fci(char* const buf)
 void redraw_screen(void)
 {
     struct Line* curLine;
+    size_t curLineNum;
 
     /* Clear screen and draw fci */
     char* slidingBuf = state.vt100Buf;
@@ -72,12 +73,24 @@ void redraw_screen(void)
 
     /* then actual text (so it overlaps the fci) */
     curLine = state.buffer.topLine;
+    curLineNum = 0;
+    /* Jump to head line inefficiently <!> */
+    while (curLineNum != state.headLineNum)
+    {
+        curLine = curLine -> next;
+        curLineNum++;
+    }
+    /* write */
     do
     {
-        printf("%s\n", curLine->content);  /* a bit crap */
+        if (curLineNum != state.headLineNum) printf("\n");
+        printf("%s", curLine->content);
         curLine = curLine->next;
+        curLineNum++;
     }
-    while (curLine);
+    while (curLine &&
+           curLineNum - state.headLineNum < (size_t)state.cursor.maxLine);
+    fflush(stdout);
 
     /* reset the cursor */
     slidingBuf = state.vt100Buf;

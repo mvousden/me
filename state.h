@@ -13,6 +13,12 @@ struct MeState
     struct Cursor cursor;
     struct termios termiosOld;  /* Not one of mine */
 
+    /* The line number that corresponds to the top line of the terminal
+     * window. Note that the number is chosen here over the pointer to the line
+     * to make synchronisation easier - we don't want to check if this line is
+     * deleted every time it is drawn. */
+    size_t headLineNum;
+
     /* File I/O */
     char* filePath;
     FILE* ioFile;

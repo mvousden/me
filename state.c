@@ -91,6 +91,7 @@ void init_state(const char* const filePath)
     /* Various setup */
     init_buffer(&state.buffer);
     init_cursor(&state.cursor);
+    state.headLineNum = 0;  /* Start at top of file. */
     state.vt100Buf = malloc(sizeof(char) * conf.vt100BufSize);
 
     /* Get all text from file and load it into line datastructure. */
