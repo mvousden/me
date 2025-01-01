@@ -14,8 +14,7 @@ int headed_mode(const int argc, const char* const * const argv)
     init_state(argv[1]);
     store_original_termios();
     term_setup();
-    redraw_screen();
-    while (proc_key(block_get_key())) redraw_screen();
+    do redraw_screen(); while (proc_key(block_get_key()));
     clear_screen();
     restore_original_termios();
     destroy_state();
