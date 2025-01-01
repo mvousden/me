@@ -49,6 +49,7 @@ What it can't do, that Mark would like it to do
 
  - Handle files with more lines than fit in the terminal window with some
    scrolling mechanism.
+ - Open a file to a particular line, using "+N".
  - Handle long lines sensibly, either by wrapping or truncating
  - Whitespace-aware newline by e.g. following the indentation of the previous
    line.
