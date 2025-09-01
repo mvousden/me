@@ -7,7 +7,7 @@ An editor written by Mark, for Mark, so he can customise it as he needs to. It
 lacks a bunch of features one would expect from a text editor, but that's fine,
 because Mark can simply implement them when he wants/needs them.
 
-Why would you do this?
+Why would I do this?
 ===
 
 A reasonable question. As the emacs-vi/m/neovim war rages on, a bunch of other
@@ -92,7 +92,7 @@ Keyboard shortcuts, in emacs-ese
  - C-M-s: state dump to fixed path
  - M-</M->: move cursor to start/end of document
  - M-f/M-b: move cursor to end/start of next/previous word
- - M-\: delete all space (ascii 0x20) from this cursor until the next character
+ - M-\: delete all space (ASCII 0x20) from this cursor until the next character
 
 Not bugs
 ===
