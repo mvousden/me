@@ -29,7 +29,7 @@ unsigned block_get_key(void)
 
     if (escApp)
     {
-        escApp = 1;
+        escApp = 0;
         key.byte[0] = ESCAPE;
     }
     else
