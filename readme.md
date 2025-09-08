@@ -47,14 +47,10 @@ What me can do
 What it can't do, that Mark would like it to do
 ===
 
- - Handle files with more lines than fit in the terminal window with some
-   scrolling mechanism.
  - Open a file to a particular line, using "+N".
  - Handle long lines sensibly, either by wrapping or truncating
  - Whitespace-aware newline by e.g. following the indentation of the previous
    line.
- - Handle window resizing elegantly, i.e. if the cursor goes off-screen after a
-   resize, the display should scroll.
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut
@@ -81,17 +77,19 @@ What it can't do, and probably will never do
 Keyboard shortcuts, in emacs-ese
 ===
 
- - C-b/C-f: move cursor one char left/right
- - C-p/C-n: move cursor one line up/down
  - C-q: quit the editor without confirmation
- - C-a: move cursor to start of line
- - C-e: move cursor to end of line
- - C-m: return synonym
- - C-d: delete one character ahead
  - C-s: save to file
  - C-M-s: state dump to fixed path
+ - C-b/C-f: move cursor one char left/right
+ - C-p/C-n: move cursor one line up/down
+ - C-v/M-v: page up/down
+ - C-l: scroll window so that the current line is in the centre, if possible
+ - C-a: move cursor to start of line
+ - C-e: move cursor to end of line
  - M-</M->: move cursor to start/end of document
  - M-f/M-b: move cursor to end/start of next/previous word
+ - C-m: return synonym
+ - C-d: delete one character ahead
  - M-\: delete all space (ASCII 0x20) from this cursor until the next character
 
 Not bugs
@@ -102,3 +100,7 @@ Not bugs
    "hanging" over the end of the line. This is fine - any visible character
    inserted at that point will be appended to the selected line, and the cursor
    will snap back to the end of the line.
+
+ - *Page up/down cursor*: When paging up/down, the cursor will move to the
+   top/bottom of the window. This is the opposite behaviour of some editors,
+   but is deliberate here.

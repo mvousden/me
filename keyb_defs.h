@@ -12,3 +12,5 @@
 #define IS_PRINTABLE(key) (key >> 5 && !(key & 0xffffff80))  /* 0x20 to 0x7f */
 #define NAV_HOME 2117163803  /* \x1b[1~, or 0d27,0d91,0d49,0d126 */
 #define NAV_END 2117360411   /* \x1b[4~, or 0d27,0d91,0d52,0d126 */
+#define PAGE_UP 2117425947   /* \x1b[6~, or 0d27,0d91,0d53,0d126 */
+#define PAGE_DN 2117491483   /* \x1b[5~, or 0d27,0d91,0d54,0d126 */

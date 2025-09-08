@@ -110,6 +110,14 @@ int proc_key(const unsigned key)
         return cmd_move_word_left();
     case ALT_('\\'):
         return cmd_zap_whitespace();
+    case CTRL_('l'):
+        return cmd_centre_on_line();
+    case PAGE_DN:
+    case CTRL_('v'):
+        return cmd_move_page_down();
+    case PAGE_UP:
+    case ALT_('v'):
+        return cmd_move_page_up();
     default:
         if (IS_PRINTABLE(key)) return cmd_insert_char(key);
         else return 1;

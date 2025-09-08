@@ -7,6 +7,24 @@
 struct MeState state;
 extern struct MeConf conf;
 
+/* Centres the terminal on the current line via state, "rounding" to the higher
+ * line. The centering does not take place immediately - this change will be
+ * respected on next UI update. Works with both out-of-bounds and in-bounds
+ * column cursor values. Does not allow centering to display lines before those
+ * that exist. */
+void centre_on_line(void)
+{
+    short const midpoint = state.cursor.maxLine / 2;  /* midpoint of screen */
+    short const movement = state.cursor.curLine - midpoint;  /* displacement */
+    state.headLineNum += movement;
+    if (state.headLineNum < 0)  /* don't move off top */
+    {
+        state.cursor.curLine += state.headLineNum - movement;
+        state.headLineNum = 0;
+    }
+    else state.cursor.curLine = midpoint;
+}
+
 void destroy_state(void)
 {
     destroy_buffer_content(&state.buffer);

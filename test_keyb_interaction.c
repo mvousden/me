@@ -1,5 +1,5 @@
-/* Not very low-level tests, but comparing a sequence of keyboard inputs to a
- * desired state. */
+/* Not very low-level tests, but comparing a sequence of keyboard inputs,
+ * each which resolves to a command, to a desired state. */
 
 #include <limits.h>
 #include <stdlib.h>
@@ -600,6 +600,171 @@ void test_whitespace_zap(void)
         "Alt-\\ should trim multiple spaces.");
 }
 
+const int caseLineScrollingSetup[] = {'A', 'a', CTRL_('m'),
+    'B', 'b', CTRL_('m'),
+    'C', 'c', CTRL_('m'),
+    'D', 'd', CTRL_('m'),
+    'E', 'e', CTRL_('m'),
+    'F', 'f', CTRL_('m'),
+    'G', 'g', CTRL_('m'),
+    'H', 'h', CTRL_('m'),
+    'I', 'i', CTRL_('m'),
+    'J', 'j', CTRL_('m'),
+    'K', 'k', CTRL_('m'),
+    'L', 'l', ALT_('<'), 0};
+const int caseLineThreeCentre[] = {ALT_('<'), CTRL_('n'), CTRL_('n'),
+    CTRL_('l'), 0};
+void test_line_scrolling_and_paging(void)
+{
+    /* This test takes place in a window with five lines and a lot of
+     * columns. */
+    update_cursor_max_bounds(&state.cursor, 5, SHRT_MAX);
+    const int* restrict c = caseLineScrollingSetup;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check page scrolling (we've just done one) */
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.headLineNum,
+        "After M-<, the window should be as high up as possible.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curLine,
+        "After M-<, the cursor should be on the top line.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "After M-<, the cursor should be on the left column.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('>')),
+        "All commands in this test should return 1.");
+    if (cursor_oob_check(&(state.cursor))) centre_on_line();
+    TEST_ASSERT_EQUAL_MESSAGE(9, state.headLineNum,
+        "After M->, the window should be centered on the final line.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "After M->, the cursor should be on the centre line.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curCol,
+        "After M->, the cursor should be on the right column.");
+
+    /* Moving to line 3 and centering. */
+    c = caseLineThreeCentre;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.headLineNum,
+        "On line three, the window should be as high up as possible.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "On line three, the cursor should be on the centre line.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should be on the left column.");
+
+    /* Moving to line 4 and centering. */
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, state.headLineNum,
+        "On line four, the window should be scrolled down by one line.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "The window should still be centred on line four.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should still be on the left column.");
+
+    /* Moving to line 2 and centering. This tests that the wrapping mechanism
+     * does not display line -1.*/
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('p')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('p')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.headLineNum,
+        "On line four, the window should be scrolled down by one line.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, state.cursor.curLine,
+        "The window should still be centred on line four.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should still be on the left column.");
+
+    /* Page down with both keys */
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('<')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('v')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(4, state.headLineNum,
+        "Paging down, the window must scroll if there is enough text.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "The window should be centred in the middle of the screen.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should still be on the left column.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(PAGE_DN),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(9, state.headLineNum,
+        "Paging down, the window must scroll if there is enough text.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "The window should be centred in the middle of the screen.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should still be on the left column.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(PAGE_DN),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(9, state.headLineNum,
+        "Paging down on the last page must do nothing.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "Paging down on the last page must do nothing.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "Paging down on the last page must do nothing.");
+
+    /* Page up with both keys */
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('>')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('v')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(3, state.headLineNum,
+        "Paging up, the window must scroll if there is enough text.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "The window should be centred in the middle of the screen.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curCol,
+        "The cursor column should not change.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(PAGE_UP),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.headLineNum,
+        "Paging up, the window must scroll if there is enough text.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curLine,
+        "At the top of the screen, the cursor should jump to the top line.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curCol,
+        "The cursor column should not change.");
+
+
+    /* What about M-> when the document has fewer lines than the midpoint? */
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('<')),   /* Line 0 */
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),  /* Line 1 */
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('n')),  /* Line 2 */
+        "All commands in this test should return 1.");
+    for (unsigned del = 0; del < 29; del++)  /* Delete everything after this */
+    {
+        TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('d')),
+            "All commands in this test should return 1.");
+    }
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('<')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(ALT_('>')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('l')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.headLineNum,
+        "With only two lines, the window should be at the top.");
+    TEST_ASSERT_EQUAL_MESSAGE(2, state.cursor.curLine,
+        "The window should be centred on line three, which does not exist.");
+    TEST_ASSERT_EQUAL_MESSAGE(0, state.cursor.curCol,
+        "The cursor should still be on the left column.");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -610,5 +775,6 @@ int main(void)
     RUN_TEST(test_char_deletion);
     RUN_TEST(test_hanging_cursor);
     RUN_TEST(test_whitespace_zap);
+    RUN_TEST(test_line_scrolling_and_paging);
     return UNITY_END();
 }

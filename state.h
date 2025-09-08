@@ -16,8 +16,11 @@ struct MeState
     /* The line number that corresponds to the top line of the terminal
      * window. Note that the number is chosen here over the pointer to the line
      * to make synchronisation easier - we don't want to check if this line is
-     * deleted every time it is drawn. */
-    size_t headLineNum;
+     * deleted every time it is drawn.
+     *
+     * This must always be positive on update, though cursor values may be
+     * subtracted from this. */
+    long headLineNum;
 
     /* File I/O */
     char* filePath;
@@ -30,6 +33,7 @@ struct MeState
     /* vt100 buffer, used for buffering command sequences */
     char* vt100Buf;
 };
+void centre_on_line(void);
 void destroy_state(void);
 void dump_state(FILE* const);
 char* get_cp_at_cursor(void);

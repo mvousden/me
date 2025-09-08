@@ -11,6 +11,12 @@
 extern struct MeState state;
 extern struct MeConf conf;
 
+int cmd_centre_on_line(void)
+{
+    centre_on_line();
+    return 1;
+}
+
 int cmd_delete_char(const int cursorOff)
 {
     /* Backspace at start */
@@ -153,6 +159,9 @@ int cmd_move_lines_up(unsigned howMany)
     }
     return 1;
 }
+
+int cmd_move_page_down(){return cmd_move_lines_down(state.cursor.maxLine + 1);}
+int cmd_move_page_up(){return cmd_move_lines_up(state.cursor.maxLine + 1);}
 
 /* I realise this reads awfully, but it's the only way I can make this somewhat
  * palatable - it's frought with edge cases. Sorry about that. */

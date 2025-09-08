@@ -58,7 +58,7 @@ char* stage_draw_fci(char* const buf)
 void redraw_screen(void)
 {
     struct Line* curLine;
-    size_t curLineNum;
+    long curLineNum;
 
     /* Clear screen and draw fci */
     char* slidingBuf = state.vt100Buf;
@@ -73,7 +73,11 @@ void redraw_screen(void)
 
     /* then actual text (so it overlaps the fci) */
     curLine = state.buffer.topLine;
-    curLineNum = 0;
+    curLineNum = state.headLineNum < 0 ? state.headLineNum : 0;  /* Sanity */
+
+    /* Re-centre if out of bounds. */
+    if (cursor_oob_check(&(state.cursor))) centre_on_line();
+
     /* Jump to head line inefficiently <!> */
     while (curLineNum != state.headLineNum)
     {
@@ -88,8 +92,7 @@ void redraw_screen(void)
         curLine = curLine->next;
         curLineNum++;
     }
-    while (curLine &&
-           curLineNum - state.headLineNum < (size_t)state.cursor.maxLine);
+    while (curLine && curLineNum - state.headLineNum <= state.cursor.maxLine);
     fflush(stdout);
 
     /* reset the cursor */
@@ -132,7 +135,8 @@ void update_window_size(void)
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ioctlOut))
         err("update_window_size/ioctl(TIOCGWINSZ)");
     /* <!> Check rc */
-    update_cursor_max_bounds(&state.cursor, ioctlOut.ws_row, ioctlOut.ws_col);
+    update_cursor_max_bounds(&state.cursor, ioctlOut.ws_row - 1,
+                             ioctlOut.ws_col);
 }
 
 #undef _DEFAULT_SOURCE
