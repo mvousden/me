@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: "echo \"\$nrconf{restart} = 'a';\" | sudo tee disable.conf"
+          command: echo "\$nrconf{restart} = 'a';" | sudo tee disable.conf
           working_directory: /etc/needrestart/conf.d/
       - run: "sudo apt update"
       - run: "sudo apt install valgrind"
