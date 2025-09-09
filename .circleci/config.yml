@@ -2,9 +2,12 @@ version: 2.1
 jobs:
   build:
     machine:
-      image: ubuntu-2204:current
+      image: ubuntu-2404:current
     steps:
       - checkout
+      - run:
+          command: "echo \"\$nrconf{restart} = 'a';\" | sudo tee disable.conf"
+          working_directory: /etc/needrestart/conf.d/
       - run: "sudo apt update"
       - run: "sudo apt install valgrind"
       - run: "git clone git@github.com:ThrowTheSwitch/Unity.git"
