@@ -88,7 +88,7 @@ void redraw_screen(void)
     do
     {
         if (curLineNum != state.headLineNum) printf("\n");
-        printf("%s", curLine->content);
+        printf("%s", curLine->content);  /* This sucks, store in a buffer */
         curLine = curLine->next;
         curLineNum++;
     }
