@@ -2,9 +2,9 @@ UNITY_DIR ?= /home/mark/repos/unity/
 UNITY_OBJ ?= $(UNITY_DIR)src/unity.o
 UNITY_OUTPUT_PARSER ?= $(UNITY_DIR)auto/parse_output.rb
 CC ?= ccache clang
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -O3 -flto
 SANITIZEFLAGS = #-fsanitize=address -fsanitize=undefined
-DEBUGFLAGS = -g3 -O0 $(SANITIZEFLAGS)
+DEBUGFLAGS = -g3 -O0 -fno-lto $(SANITIZEFLAGS)
 LDLIBS =
 OBJ = buffer.o cmds.o conf.o cursor.o error.o helpers.o keyb.o line.o state.o \
     term.o
