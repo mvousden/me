@@ -66,6 +66,7 @@ What it can't do, that Mark would like it to do
    sensible support for tab characters depending on editing mode down the line.
  - Treat certain files differently, i.e. editing modes (particularly for C!)
  - Syntax highlighting (nice-to-have)
+ - On error, write the buffer to some backup file before giving up completely
 
 What it can't do, and probably will never do
 ===
