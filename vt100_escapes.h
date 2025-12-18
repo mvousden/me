@@ -23,8 +23,9 @@ char* vt100_cursor_pos_to_buf(char* buf,
                               const unsigned short line,
                               const unsigned short col)
 {
-    const size_t bytes = snprintf(0, 0, "\x1b[%05u;%05uH", line, col) + 1;
-    snprintf(buf, bytes, "\x1b[%05u;%05uH", line, col);
+    const int bytes = snprintf(0, 0, "\x1b[%05u;%05uH", line, col) + 1;
+	if (bytes < 0) err("vt100_cursor_pos_to_buf");
+    snprintf(buf, (size_t)bytes, "\x1b[%05u;%05uH", line, col);
     while (*buf++);  /* snprintf null-terminates */
     return buf - 1;
 }

@@ -35,10 +35,11 @@ char* stage_draw_fci(char* const buf)
         /* Precomputing: stored persistently across drawings */
         if (!state.fciStr)
         {
-            size_t bytes = snprintf(0, 0, "%s%c%s", conf.fciStrPre,
-                                    conf.fciChar, conf.fciStrPost) + 1;
-            if (!(state.fciStr = malloc(bytes))) err("draw_fci (OOM)");
-            snprintf(state.fciStr, bytes, "%s%c%s", conf.fciStrPre,
+            int bytes = snprintf(0, 0, "%s%c%s", conf.fciStrPre,
+                                 conf.fciChar, conf.fciStrPost) + 1;
+            if (bytes < 0) err("draw_fci (bytecount)");
+            if (!(state.fciStr = malloc((size_t)bytes))) err("draw_fci (OOM)");
+            snprintf(state.fciStr, (size_t)bytes, "%s%c%s", conf.fciStrPre,
                      conf.fciChar, conf.fciStrPost);
             state.fciStrLen = strlen(state.fciStr);
         }
