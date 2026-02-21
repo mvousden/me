@@ -9,13 +9,13 @@ struct MeConf
     const size_t openChunkSize;  /* Greater than zero - fread chunk size. */
 
     /* Terminal properties */
-    const short colOffset;
-    const short lineOffset;
+    const int colOffset;
+    const int lineOffset;
 
     /* Fill column indicator properties */
     const char* fciStrPre;
     const char fciChar;
     const char* fciStrPost;
-    unsigned short fciCol;
+    int fciCol;
 };
 #endif

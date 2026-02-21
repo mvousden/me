@@ -28,7 +28,7 @@ void clear_screen(void)
  * terminal is too narrow. */
 char* stage_draw_fci(char* const buf)
 {
-    unsigned short line;
+    int line;
     char* slidingBuf = buf;  /* Sliding buffer */
     if (conf.fciCol < state.cursor.maxCol)
     {

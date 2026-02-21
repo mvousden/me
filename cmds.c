@@ -92,7 +92,7 @@ int cmd_move_chars_right(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         /* Within line */
-        if (state.cursor.curCol < (short)state.buffer.currentLine->len)
+        if (state.cursor.curCol < state.buffer.currentLine->len)
             cursor_rt(&state.cursor);
         else if (state.buffer.currentLine->next)  /* To start of next line */
         {

@@ -20,8 +20,7 @@ void vt100_exec(const char* const escape)
 /* Writes a cursor position command to a buffer. It better be big enough!
  * Returns the pointer of dest after the copy. */
 char* vt100_cursor_pos_to_buf(char* buf,
-                              const unsigned short line,
-                              const unsigned short col)
+                              const unsigned int line, const unsigned int col)
 {
     const int bytes = snprintf(0, 0, "\x1b[%05u;%05uH", line, col) + 1;
 	if (bytes < 0) err("vt100_cursor_pos_to_buf");

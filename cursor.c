@@ -23,7 +23,7 @@ void cursor_sol(struct Cursor* const restrict c){c->curCol = 0;}
 /* Boolean-style checks */
 int is_cursor_sol(struct Cursor* const c){return !(c->curCol);}
 int is_cursor_eol(struct Cursor* const c, const struct Line* const l)
-{return c->curCol >= (short)l->len;}
+{return c->curCol >= (int)l->len;}
 
 int cursor_oob_check(struct Cursor* const restrict c)
 {
@@ -40,14 +40,14 @@ void init_cursor(struct Cursor* const restrict c)
     c->maxCol = 0;
 }
 int update_cursor_max_bounds(struct Cursor* const restrict c,
-                             const short maxLine, const short maxCol)
+                             const int maxLine, const int maxCol)
 {return c->maxLine = maxLine, c->maxCol = maxCol, cursor_oob_check(c);}
 
 /* Warping/teleportation */
-int warp_cursor(struct Cursor* const restrict c, const short curLine,
-                const short curCol)
+int warp_cursor(struct Cursor* const restrict c, const int curLine,
+                const int curCol)
 {return warp_cursor_col(c, curCol), warp_cursor_line(c, curLine);}
-int warp_cursor_col(struct Cursor* const restrict c, const short curCol)
+int warp_cursor_col(struct Cursor* const restrict c, const int curCol)
 {return c->curCol = curCol, cursor_oob_check(c);}
-int warp_cursor_line(struct Cursor* const restrict c, const short curLine)
+int warp_cursor_line(struct Cursor* const restrict c, const int curLine)
 {return c->curLine = curLine, cursor_oob_check(c);}

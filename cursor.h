@@ -9,12 +9,12 @@
 struct Cursor
 {
     /* Location of the cursor on the terminal */
-    short curLine;
-    short curCol;
+    int curLine;
+    int curCol;
 
     /* Cursor bounds */
-    short maxLine;
-    short maxCol;
+    int maxLine;
+    int maxCol;
 };
 /* Elementary cursor movement operations */
 int cursor_up(struct Cursor* const);
@@ -30,9 +30,9 @@ int is_cursor_eol(struct Cursor* const, const struct Line* const);
 
 int cursor_oob_check(struct Cursor* const);
 void init_cursor(struct Cursor* const);
-int update_cursor_max_bounds(struct Cursor* const, const short, const short);
+int update_cursor_max_bounds(struct Cursor* const, const int, const int);
 
-int warp_cursor(struct Cursor* const, const short, const short);
-int warp_cursor_col(struct Cursor* const, const short);
-int warp_cursor_line(struct Cursor* const, const short);
+int warp_cursor(struct Cursor* const, const int, const int);
+int warp_cursor_col(struct Cursor* const, const int);
+int warp_cursor_line(struct Cursor* const, const int);
 #endif

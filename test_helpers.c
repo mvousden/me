@@ -29,7 +29,7 @@ void test_is_alphanum(void)
     const unsigned char delimiters[] = {'0', ':', 'A', '[', 'a', '{', 0x80, 0};
     const int answers[]              = {0  , 1  , 0  , 1  , 0  , 1  , 0};
     const unsigned rangeMax = strlen((char*)delimiters);
-    unsigned short range;
+    unsigned range;
     unsigned char test = 0;
     for (range = 0; range < rangeMax; range++)
         for (; test < delimiters[range];

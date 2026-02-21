@@ -190,7 +190,7 @@ void test_warp_oob(void)
 {
     struct Cursor c;
     init_cursor(&c);
-    const short bound = 80;
+    const int bound = 80;
 
     /* Column moves */
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, bound, bound),

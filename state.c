@@ -14,8 +14,8 @@ extern struct MeConf conf;
  * that exist. */
 void centre_on_line(void)
 {
-    short const midpoint = state.cursor.maxLine / 2;  /* midpoint of screen */
-    short const movement = state.cursor.curLine - midpoint;  /* displacement */
+    int const midpoint = state.cursor.maxLine / 2;  /* midpoint of screen */
+    int const movement = state.cursor.curLine - midpoint;  /* displacement */
     state.headLineNum += movement;
     if (state.headLineNum < 0)  /* don't move off top */
     {
