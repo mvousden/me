@@ -45,7 +45,8 @@ char* stage_draw_fci(char* const buf)
         }
 
         /* Staging movements and drawings to buffer */
-        slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, 0, conf.fciCol);
+        slidingBuf = vt100_cursor_pos_to_buf(slidingBuf, 0,
+                                             (unsigned)conf.fciCol);
         for (line = 0; line <= state.cursor.maxLine; line++)
         {
             slidingBuf = slide_copy(state.fciStr, slidingBuf);
@@ -99,8 +100,8 @@ void redraw_screen(void)
     /* reset the cursor */
     slidingBuf = state.vt100Buf;
     slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
-        state.cursor.curLine + conf.lineOffset,
-        state.cursor.curCol + conf.colOffset);
+        (unsigned)(state.cursor.curLine + conf.lineOffset),
+        (unsigned)(state.cursor.curCol + conf.colOffset));
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);

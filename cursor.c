@@ -16,14 +16,14 @@ int cursor_rt(struct Cursor* const restrict c)
 {return c->curCol++, cursor_oob_check(c);}
 int cursor_eol(struct Cursor* const restrict c,
                const struct Line* const restrict l)
-{return c->curCol = l->len, cursor_oob_check(c);}
+{return c->curCol = lenint(l), cursor_oob_check(c);}
 /* No return, because it must be in-bounds by definition. */
 void cursor_sol(struct Cursor* const restrict c){c->curCol = 0;}
 
 /* Boolean-style checks */
 int is_cursor_sol(struct Cursor* const c){return !(c->curCol);}
 int is_cursor_eol(struct Cursor* const c, const struct Line* const l)
-{return c->curCol >= (int)l->len;}
+{return c->curCol >= lenint(l);}
 
 int cursor_oob_check(struct Cursor* const restrict c)
 {

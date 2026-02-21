@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -104,6 +105,18 @@ void insert_char_into_line(struct Line* const restrict line, const char in,
     do *c = *(c - 1); while (--c != line->content + off);
     *c = in;
     line->len++;
+}
+
+/* This exists as a concession to the fact that line lengths need to be size_ts
+ * due to snprintf, but the cursor needs to be signed to capture out-of-bounds
+ * behaviour. Casting the length without checking bounds first would be
+ * perilous, so this function exists to make that interface work while keeping
+ * code somewhat readable.
+ *
+ * Yeah, I don't like it either. */
+int lenint(struct Line const * const line)
+{
+    return line->len > INT_MAX ? /* Crisis */ INT_MAX : (int)line->len;
 }
 
 void merge_line_with_next(struct Line* const restrict line)

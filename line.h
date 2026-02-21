@@ -21,6 +21,7 @@ void destroy_line(struct Line*);
 void destroy_line_cascade(struct Line*);
 void init_line(struct Line*, struct Line* const, struct Line* const);
 void insert_char_into_line(struct Line* const, const char, const size_t);
+int lenint(struct Line const * const);
 void merge_line_with_next(struct Line* const);
 void split_line(struct Line* const, const size_t, const char, unsigned);
 #endif

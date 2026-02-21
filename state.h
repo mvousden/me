@@ -20,7 +20,7 @@ struct MeState
      *
      * This must always be positive on update, though cursor values may be
      * subtracted from this. */
-    long headLineNum;
+    int headLineNum;
 
     /* File I/O */
     char* filePath;

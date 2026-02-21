@@ -23,7 +23,8 @@ int cmd_delete_char(const int cursorOff)
     if (state.cursor.curCol + cursorOff < 0)
     {
         if (!state.buffer.currentLine->prev) return 1;  /* Top line */
-        warp_cursor_col(&state.cursor, state.buffer.currentLine->prev->len);
+        warp_cursor_col(&state.cursor,
+                        lenint(state.buffer.currentLine->prev));
         state.buffer.currentLine = state.buffer.currentLine->prev;
         merge_line_with_next(state.buffer.currentLine);
         cursor_up(&state.cursor);
@@ -40,7 +41,7 @@ int cmd_delete_char(const int cursorOff)
         else  /* Delete not at end, or backspace not at start */
         {
             delete_char_from_line(state.buffer.currentLine,
-                                  state.cursor.curCol);
+                                  (size_t)state.cursor.curCol);
         }
     }
     return 1;
@@ -58,7 +59,7 @@ int cmd_dump_state(void)
 int cmd_insert_char(const unsigned in)
 {
     insert_char_into_line(state.buffer.currentLine, (char)in,
-                          state.cursor.curCol);
+                          (size_t)state.cursor.curCol);
     if (!is_cursor_eol(&state.cursor, state.buffer.currentLine))
         cursor_rt(&state.cursor);
     /* Hanging cursor must snap to the end of the line when used -
@@ -92,7 +93,7 @@ int cmd_move_chars_right(unsigned howMany, unsigned* const isEof)
     while (howMany-- && !eof)
     {
         /* Within line */
-        if (state.cursor.curCol < state.buffer.currentLine->len)
+        if (state.cursor.curCol < lenint(state.buffer.currentLine))
             cursor_rt(&state.cursor);
         else if (state.buffer.currentLine->next)  /* To start of next line */
         {
@@ -108,14 +109,14 @@ int cmd_move_chars_right(unsigned howMany, unsigned* const isEof)
 
 int cmd_move_doc_end(void)
 {
-    cmd_move_lines_down(UINT_MAX);
+    cmd_move_lines_down(INT_MAX);
     cmd_move_line_end();
     return 1;
 }
 
 int cmd_move_doc_home(void)
 {
-    cmd_move_lines_up(UINT_MAX);
+    cmd_move_lines_up(INT_MAX);
     cmd_move_line_home();
     return 1;
 }
@@ -132,7 +133,7 @@ int cmd_move_line_home(void)
     return 1;
 }
 
-int cmd_move_lines_down(unsigned howMany)
+int cmd_move_lines_down(int howMany)
 {
     while (howMany--)
     {
@@ -146,7 +147,7 @@ int cmd_move_lines_down(unsigned howMany)
     return 1;
 }
 
-int cmd_move_lines_up(unsigned howMany)
+int cmd_move_lines_up(int howMany)
 {
     while (howMany--)
     {
@@ -229,8 +230,9 @@ int cmd_save_file(void)
 
 int cmd_split_line(const char ws, const unsigned wsCount)
 {
-    split_line(state.buffer.currentLine, state.cursor.curCol, ws, wsCount);
-    warp_cursor_col(&state.cursor, wsCount);
+    split_line(state.buffer.currentLine, (size_t)state.cursor.curCol,
+               ws, wsCount);
+    warp_cursor_col(&state.cursor, (int)wsCount);
     cursor_dn(&state.cursor);
     state.buffer.currentLine = state.buffer.currentLine->next;
     return 1;
@@ -241,7 +243,8 @@ int cmd_quit(void){return 0;}
 int cmd_zap_whitespace(void)
 {
     while (is_space(*get_cp_at_cursor()))
-        delete_char_from_line(state.buffer.currentLine, state.cursor.curCol);
+        delete_char_from_line(state.buffer.currentLine,
+                              (size_t)state.cursor.curCol);
     return 1;
 }
 
