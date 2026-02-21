@@ -8,9 +8,12 @@
  * checking - mostly a debugging utility for terminal characters. */
 void dump_chars_to_tmp_file(char const * const buf)
 {
-    FILE* tmp = fopen("tmp", "w");
-    fwrite(buf, sizeof(char), strlen(buf), tmp);
-    fclose(tmp);
+    FILE* tmp;
+    if ((tmp = fopen("tmp", "w")))
+    {
+        fwrite(buf, sizeof(char), strlen(buf), tmp);
+        fclose(tmp);
+    }
 }
 
 /* Dump uint and its constituent bytes (4-byte unsigneds only) to a file named
@@ -29,7 +32,7 @@ void dump_uint_to_tmp_file(unsigned const key)
     un.u = key;
     for (ix = 0; ix < 4; ix++) str[ix] = un.c[ix];
     str[4] = 0;
-    tmp = fopen("tmp", "w");
+    if (!(tmp = fopen("tmp", "w"))) return;
     fprintf(tmp,
             "unsigned value: %010u, %08x\n"
             "bytes (dec): 0d%03u, 0d%03u, 0d%03u, 0d%03u\n"

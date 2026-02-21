@@ -50,7 +50,11 @@ int cmd_delete_char(const int cursorOff)
 int cmd_dump_state(void)
 {
     FILE* const out = fopen("me_dump", "w");
-    if (!out) err("cmd_dump_state/fopen");
+    if (!out)
+    {
+        err("cmd_dump_state/fopen");
+        return 1;
+    }
     dump_state(out);
     fclose(out);
     return 1;
@@ -213,7 +217,11 @@ int cmd_save_file(void)
     struct Line* writeLine = state.buffer.topLine;
     char newl = '\n';
     FILE* const out = fopen(state.filePath, "w");
-    if (!out) err("cmd_save_file/fopen");
+    if (!out)
+    {
+        err("cmd_save_file/fopen");
+        return 1;
+    }
     do
     {
         if (writeLine->len > 0 &&
