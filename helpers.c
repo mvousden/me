@@ -6,7 +6,7 @@
 
 /* Dump null-terminated array of characters to a file named 'tmp'. Clobbers, no
  * checking - mostly a debugging utility for terminal characters. */
-void dump_chars_to_tmp_file(const char* const buf)
+void dump_chars_to_tmp_file(char const * const buf)
 {
     FILE* tmp = fopen("tmp", "w");
     fwrite(buf, sizeof(char), strlen(buf), tmp);
@@ -16,7 +16,7 @@ void dump_chars_to_tmp_file(const char* const buf)
 /* Dump uint and its constituent bytes (4-byte unsigneds only) to a file named
  * 'tmp'. Clobbers, no checking - mostly a debugging utility for terminal
  * characters. */
-void dump_uint_to_tmp_file(const unsigned key)
+void dump_uint_to_tmp_file(unsigned const key)
 {
     union Key
     {
@@ -43,19 +43,19 @@ void dump_uint_to_tmp_file(const unsigned key)
 }
 
 /* ASCII */
-int is_alphanum(const char c)
+int is_alphanum(char const c)
 {
     return ((c > 0x2f && c < 0x3a) ||  /* digits */
             (c > 0x40 && c < 0x5b) ||  /* upper-case */
             (c > 0x60 && c < 0x7b));   /* lower-case */
 }
 
-int is_space(const char c){return c == 0x20;}
+int is_space(char const c){return c == 0x20;}
 
 /* Dirty string copying function that copies NULL-terminated src to buf, then
  * returns a pointer one character off the end of buf. Does no checking of any
  * kind, and does not NULL-terminate the buffer (really). */
-char* slide_copy(const char* src, char* buf)
+char* slide_copy(char const * src, char* buf)
 {
     while (*src) *buf++ = *src++;
     return buf;

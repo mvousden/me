@@ -4,7 +4,7 @@
 #include "state.h"
 #include "term.h"
 
-int headed_mode(const int argc, const char* const * const argv)
+int headed_mode(int const argc, char const * const * const argv)
 {
     if (argc < 2)
     {
@@ -21,5 +21,5 @@ int headed_mode(const int argc, const char* const * const argv)
     return 0;
 }
 
-int main(const int argc, const char* const * const argv)
+int main(int const argc, char const * const * const argv)
 {return headed_mode(argc, argv);}

@@ -37,5 +37,5 @@ void centre_on_line(void);
 void destroy_state(void);
 void dump_state(FILE* const);
 char* get_cp_at_cursor(void);
-void init_state(const char* const);
+void init_state(char const * const);
 #endif

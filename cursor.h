@@ -30,9 +30,9 @@ int is_cursor_eol(struct Cursor* const, const struct Line* const);
 
 int cursor_oob_check(struct Cursor* const);
 void init_cursor(struct Cursor* const);
-int update_cursor_max_bounds(struct Cursor* const, const int, const int);
+int update_cursor_max_bounds(struct Cursor* const, int const, int const);
 
-int warp_cursor(struct Cursor* const, const int, const int);
-int warp_cursor_col(struct Cursor* const, const int);
-int warp_cursor_line(struct Cursor* const, const int);
+int warp_cursor(struct Cursor* const, int const, int const);
+int warp_cursor_col(struct Cursor* const, int const);
+int warp_cursor_line(struct Cursor* const, int const);
 #endif

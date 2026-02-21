@@ -4,18 +4,18 @@
 struct MeConf
 {
     /* Lines and buffers */
-    const size_t initLineSize;  /* Greater than zero. */
-    const size_t vt100BufSize;  /* Greater than zero, arbitrary. */
-    const size_t openChunkSize;  /* Greater than zero - fread chunk size. */
+    size_t const initLineSize;  /* Greater than zero. */
+    size_t const vt100BufSize;  /* Greater than zero, arbitrary. */
+    size_t const openChunkSize;  /* Greater than zero - fread chunk size. */
 
     /* Terminal properties */
-    const int colOffset;
-    const int lineOffset;
+    int const colOffset;
+    int const lineOffset;
 
     /* Fill column indicator properties */
-    const char* fciStrPre;
-    const char fciChar;
-    const char* fciStrPost;
+    char const * fciStrPre;
+    char const  fciChar;
+    char const * fciStrPost;
     int fciCol;
 };
 #endif

@@ -90,7 +90,7 @@ void dump_state(FILE* const out)
 char* get_cp_at_cursor(void)
 {return state.buffer.currentLine->content + state.cursor.curCol;}
 
-void init_state(const char* const filePath)
+void init_state(char const * const filePath)
 {
     /* File check ahead of time - if filePath is NULL, we ain't reading or
      * writing. */

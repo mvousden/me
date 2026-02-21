@@ -56,7 +56,7 @@ int cmd_dump_state(void)
     return 1;
 }
 
-int cmd_insert_char(const unsigned in)
+int cmd_insert_char(unsigned const in)
 {
     insert_char_into_line(state.buffer.currentLine, (char)in,
                           (size_t)state.cursor.curCol);
@@ -166,9 +166,9 @@ int cmd_move_page_up(){return cmd_move_lines_up(state.cursor.maxLine + 1);}
 
 /* I realise this reads awfully, but it's the only way I can make this somewhat
  * palatable - it's frought with edge cases. Sorry about that. */
-int cmd_move_word(const unsigned isRight)
+int cmd_move_word(unsigned const isRight)
 {
-    const char* c;
+    char const * c;
     unsigned eof = 0;
     /* Backward by one step if we are on the first character of a word,
      * regardless of where that word is in the line:
@@ -228,7 +228,7 @@ int cmd_save_file(void)
     return 1;
 }
 
-int cmd_split_line(const char ws, const unsigned wsCount)
+int cmd_split_line(char const ws, unsigned const wsCount)
 {
     split_line(state.buffer.currentLine, (size_t)state.cursor.curCol,
                ws, wsCount);
@@ -249,7 +249,7 @@ int cmd_zap_whitespace(void)
 }
 
 /* Convenience */
-int move_char(const unsigned isRight, unsigned* const isEof)
+int move_char(unsigned const isRight, unsigned* const isEof)
 {
     if (isRight) return cmd_move_chars_right(1, isEof);
     else return cmd_move_chars_left(1, isEof);

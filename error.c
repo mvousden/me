@@ -6,7 +6,7 @@
 
 int triggered = 0;
 
-void err(const char * const s)
+void err(char const * const s)
 {
     if (!triggered)
     {

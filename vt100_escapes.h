@@ -12,7 +12,7 @@
 
 /* Execute a bunch of vt100 escape sequences, with other characters thrown in
  * if you want. */
-void vt100_exec(const char* const escape)
+void vt100_exec(char const * const escape)
 {
     write(STDOUT_FILENO, escape, strlen(escape));
 }
@@ -20,9 +20,9 @@ void vt100_exec(const char* const escape)
 /* Writes a cursor position command to a buffer. It better be big enough!
  * Returns the pointer of dest after the copy. */
 char* vt100_cursor_pos_to_buf(char* buf,
-                              const unsigned int line, const unsigned int col)
+							  unsigned const line, unsigned const col)
 {
-    const int bytes = snprintf(0, 0, "\x1b[%05u;%05uH", line, col) + 1;
+    int const bytes = snprintf(0, 0, "\x1b[%05u;%05uH", line, col) + 1;
     if (bytes < 0) err("vt100_cursor_pos_to_buf");
     snprintf(buf, (size_t)bytes, "\x1b[%05u;%05uH", line, col);
     while (*buf++);  /* snprintf null-terminates */

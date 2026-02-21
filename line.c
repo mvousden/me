@@ -7,7 +7,7 @@
 #include "line.h"
 extern struct MeConf conf;
 
-void append_char(struct Line* const restrict line, const char in)
+void append_char(struct Line* const restrict line, char const in)
 {
     char* c;
     check_expand_line_buffer(line, 1);
@@ -19,7 +19,7 @@ void append_char(struct Line* const restrict line, const char in)
 
 /* If the string is not null-terminated, you get what you deserve. */
 void append_string(struct Line* const restrict line,
-                   const char* const restrict in)
+                   char const * const restrict in)
 {
     size_t inLen = strlen(in);
     check_expand_line_buffer(line, inLen + 1);
@@ -30,7 +30,7 @@ void append_string(struct Line* const restrict line,
 /* If inserting `insertLen` chars into the `line->content` buffer would cause
  * it to overflow, expand that buffer.  */
 void check_expand_line_buffer(struct Line* const restrict line,
-                              const size_t insertLen)
+                              size_t const insertLen)
 {
     size_t initBufSiz;
     char* c;
@@ -47,7 +47,7 @@ void check_expand_line_buffer(struct Line* const restrict line,
          *c++ = 0);
 }
 
-void delete_char_from_line(struct Line* const restrict line, const size_t off)
+void delete_char_from_line(struct Line* const restrict line, size_t const off)
 {
     char* c;
     if (off >= line->len) return;  /* Sanity, including wraparound */
@@ -88,8 +88,8 @@ void init_line(struct Line* const restrict line,
     *(line->content) = 0;
 }
 
-void insert_char_into_line(struct Line* const restrict line, const char in,
-                           const size_t off)  /* char prepended if off == 0 */
+void insert_char_into_line(struct Line* const restrict line, char const in,
+                           size_t const off)  /* char prepended if off == 0 */
 {
     char* c;
     /* Append instead if offset is too big. */
@@ -133,8 +133,8 @@ void merge_line_with_next(struct Line* const restrict line)
 /* Splits the contents of this line at an offset, moving the rhs contents to a
  * new line placed after this one. Adds whitespace to that line if
  * necessary. */
-void split_line(struct Line* const restrict line, const size_t off,
-                const char ws, unsigned wsCount)
+void split_line(struct Line* const restrict line, size_t const off,
+                char const ws, unsigned wsCount)
 {
     /* Something to hold a string of repeated whitespace characters, so that it
      * can be appended to the new line efficiently. */

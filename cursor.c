@@ -40,14 +40,14 @@ void init_cursor(struct Cursor* const restrict c)
     c->maxCol = 0;
 }
 int update_cursor_max_bounds(struct Cursor* const restrict c,
-                             const int maxLine, const int maxCol)
+                             int const maxLine, int const maxCol)
 {return c->maxLine = maxLine, c->maxCol = maxCol, cursor_oob_check(c);}
 
 /* Warping/teleportation */
-int warp_cursor(struct Cursor* const restrict c, const int curLine,
-                const int curCol)
+int warp_cursor(struct Cursor* const restrict c, int const curLine,
+                int const curCol)
 {return warp_cursor_col(c, curCol), warp_cursor_line(c, curLine);}
-int warp_cursor_col(struct Cursor* const restrict c, const int curCol)
+int warp_cursor_col(struct Cursor* const restrict c, int const curCol)
 {return c->curCol = curCol, cursor_oob_check(c);}
-int warp_cursor_line(struct Cursor* const restrict c, const int curLine)
+int warp_cursor_line(struct Cursor* const restrict c, int const curLine)
 {return c->curLine = curLine, cursor_oob_check(c);}
