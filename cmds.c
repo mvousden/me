@@ -72,6 +72,13 @@ int cmd_insert_char(unsigned const in)
     return 1;
 }
 
+int cmd_jump_to_line(int const linejump)
+{
+    /* Slow, inefficient */
+    cmd_move_line_home();
+    return cmd_move_lines_down(linejump);
+}
+
 int cmd_move_chars_left(unsigned howMany, unsigned* const isEof)
 {
     unsigned eof = 0;

@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "conf.h"
+#include "cmds.h"
 #include "keyb_defs.h"
 #include "error.h"
 #include "state.h"
@@ -90,7 +91,7 @@ void dump_state(FILE* const out)
 char* get_cp_at_cursor(void)
 {return state.buffer.currentLine->content + state.cursor.curCol;}
 
-void init_state(char const * const filePath)
+void init_state(char const * const filePath, int const lineopen)
 {
     /* File check ahead of time - if filePath is NULL, we ain't reading or
      * writing. */
@@ -114,4 +115,7 @@ void init_state(char const * const filePath)
 
     /* Get all text from file and load it into line datastructure. */
     if (filePath) populate_buffer_from_iofile(&state.buffer, state.ioFile);
+
+    /* Hooray */
+    cmd_jump_to_line(lineopen);
 }

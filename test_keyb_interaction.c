@@ -13,7 +13,7 @@ extern struct MeState state;
 
 void setUp(void)
 {
-    init_state(NULL);
+    init_state(NULL, 0);
     update_cursor_max_bounds(&state.cursor, SHRT_MAX, SHRT_MAX);
 }
 

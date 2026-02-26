@@ -42,18 +42,18 @@ What me can do
  - Be unit-tested, somewhat
  - Word/line/document-jumping
  - Write buffer content dump (and some state) to binary file
- - Opening existing files
+ - Opening existing files, and moving the cursor to a particular line, using
+   the common "+N" syntax.
 
 What it can't do, that Mark would like it to do
 ===
 
- - Open a file to a particular line, using "+N".
  - Handle long lines sensibly, either by wrapping or truncating
  - Whitespace-aware newline by e.g. following the indentation of the previous
    line.
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
- - Goto line shortcut
+ - Goto line shortcut (command is implemented)
  - Word-wrap mechanism (e.g. M-q (emacs))
  - Save written text to a particular path
  - Be demonstrably performant - the data structure for holding text is
