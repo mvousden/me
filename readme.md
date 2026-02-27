@@ -54,19 +54,20 @@ What it can't do, that Mark would like it to do
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut (command is implemented)
+ - Text selection
+ - Kill/yank with ring buffer
  - Word-wrap mechanism (e.g. M-q (emacs))
  - Save written text to a particular path
  - Be demonstrably performant - the data structure for holding text is
    suboptimal, perhaps a gap buffer structure on a per-line basis would be more
    effective.
  - Unit tests for saving and opening
- - Dumb search and replace
- - Regex search and replace (using a convenient regex library)
+ - Dumb search for jumping the cursor around
+ - On error, write the buffer to some backup file before giving up completely
  - A tab key that doesn't suck, (to be clear, I don't want autocompletion), and
    sensible support for tab characters depending on editing mode down the line.
  - Treat certain files differently, i.e. editing modes (particularly for C!)
  - Syntax highlighting (nice-to-have)
- - On error, write the buffer to some backup file before giving up completely
 
 What it can't do, and probably will never do
 ===
@@ -74,6 +75,7 @@ What it can't do, and probably will never do
  - External scripting language support (with the possible exception of a
    configurator)
  - Non-ASCII characters
+ - Regex search, and replacement (use e.g. sed)
 
 Keyboard shortcuts, in emacs-ese
 ===
