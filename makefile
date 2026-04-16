@@ -2,7 +2,8 @@ UNITY_DIR ?= /home/mark/repos/unity/
 UNITY_OBJ ?= $(UNITY_DIR)src/unity.o
 UNITY_OUTPUT_PARSER ?= $(UNITY_DIR)auto/parse_output.rb
 CC ?= ccache clang
-CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -Wformat=2 -Wvla -Wconversion -O3 -flto
+CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -Wformat=2 -Wvla -Wconversion -O3 \
+    -flto
 SANITIZEFLAGS = #-fsanitize=address -fsanitize=undefined
 DEBUGFLAGS = -g3 -O0 -fno-lto $(SANITIZEFLAGS)
 LDLIBS =
