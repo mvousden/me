@@ -16,5 +16,5 @@ struct Buffer
 };
 void destroy_buffer_content(struct Buffer* const);
 void init_buffer(struct Buffer* const);
-void populate_buffer_from_iofile(struct Buffer* const, FILE* const);
+void populate_buffer_from_file(struct Buffer* const, FILE* const);
 #endif

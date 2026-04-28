@@ -61,7 +61,7 @@ What it can't do, that Mark would like it to do
  - Be demonstrably performant - the data structure for holding text is
    suboptimal, perhaps a gap buffer structure on a per-line basis would be more
    effective.
- - Unit tests for saving and opening
+ - Unit tests for file saving
  - Dumb search for jumping the cursor around
  - On error, write the buffer to some backup file before giving up completely
  - A tab key that doesn't suck, (to be clear, I don't want autocompletion), and

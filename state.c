@@ -114,7 +114,7 @@ void init_state(char const * const filePath, int const lineopen)
     state.vt100Buf = malloc(sizeof(char) * conf.vt100BufSize);
 
     /* Get all text from file and load it into line datastructure. */
-    if (filePath) populate_buffer_from_iofile(&state.buffer, state.ioFile);
+    if (filePath) populate_buffer_from_file(&state.buffer, state.ioFile);
 
     /* Hooray */
     cmd_jump_to_line(lineopen);
