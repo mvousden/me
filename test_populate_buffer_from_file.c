@@ -24,7 +24,10 @@ void setUp(void)
     testBuffer = malloc(sizeof(struct Buffer));
     TEST_ASSERT_NOT_NULL_MESSAGE(testBuffer, "OOM");
     init_buffer(testBuffer);
-    memFile = fmemopen(NULL, BIG_ENOUGH, "w+");
+    if (!(memFile = fmemopen(NULL, BIG_ENOUGH, "w+")))
+        perror("We didn't get any memory. Let us not descend into despair, "
+               "but carry on as best as we can (we will almost certainly "
+               "segfault...). An error");
     result = calloc(BIG_ENOUGH, sizeof(char));
     TEST_ASSERT_NOT_NULL_MESSAGE(result, "OOM");
 }
