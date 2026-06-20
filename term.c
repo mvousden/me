@@ -86,11 +86,12 @@ void redraw_screen(void)
         curLine = curLine -> next;
         curLineNum++;
     }
-    /* write */
+
+    /* Write! */
     do
     {
-        if (curLineNum != state.headLineNum) printf("\n");
-        printf("%s", curLine->content);  /* This sucks, store in a buffer */
+        if (curLineNum != state.headLineNum) putchar('\n');
+        write(STDOUT_FILENO, curLine->content, (size_t)state.cursor.maxCol);
         curLine = curLine->next;
         curLineNum++;
     }
