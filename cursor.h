@@ -5,16 +5,17 @@
 
 /* Controlling/storing the movement of the cursor, very OOP-ish. Origin
  * co-ordinates at (0, 0). Any negative co-ordinate, or any co-ordinate
- * exceeding a bound defined below, is considered out-of-bounds (oob). */
+ * exceeding the maxLine bound defined below, is considered out-of-bounds
+ * (oob). Note that there are no "horizontal" bounds, to allow the cursor to
+ * walk across horizontal "pages". */
 struct Cursor
 {
     /* Location of the cursor on the terminal */
     int curLine;
     int curCol;
 
-    /* Cursor bounds */
+    /* Cursor bound */
     int maxLine;
-    int maxCol;
 };
 /* Elementary cursor movement operations */
 int cursor_up(struct Cursor* const);
@@ -30,7 +31,7 @@ int is_cursor_eol(struct Cursor* const, const struct Line* const);
 
 int cursor_oob_check(struct Cursor* const);
 void init_cursor(struct Cursor* const);
-int update_cursor_max_bounds(struct Cursor* const, int const, int const);
+int update_cursor_maxline(struct Cursor* const, int const);
 
 int warp_cursor(struct Cursor* const, int const, int const);
 int warp_cursor_col(struct Cursor* const, int const);

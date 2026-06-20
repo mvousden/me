@@ -31,7 +31,7 @@ char* stage_draw_fci(char* const buf)
 {
     int line;
     char* slidingBuf = buf;  /* Sliding buffer */
-    if (conf.fciCol < state.cursor.maxCol)
+    if (conf.fciCol < state.maxCol)
     {
         /* Precomputing: stored persistently across drawings */
         if (!state.fciStr)
@@ -92,7 +92,7 @@ void redraw_screen(void)
     do
     {
         if (curLineNum != state.headLineNum) putchar('\n');
-        write(STDOUT_FILENO, curLine->content, (size_t)state.cursor.maxCol);
+        write(STDOUT_FILENO, curLine->content, (size_t)state.maxCol);
         curLine = curLine->next;
         curLineNum++;
     }
@@ -104,7 +104,7 @@ void redraw_screen(void)
     slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
         (unsigned)(state.cursor.curLine + conf.lineOffset),
         (unsigned)(conf.colOffset +
-                   MIN(state.cursor.curCol, state.cursor.maxCol)));
+                   MIN(state.cursor.curCol, state.maxCol)));
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
@@ -140,8 +140,8 @@ void update_window_size(void)
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ioctlOut))
         err("update_window_size/ioctl(TIOCGWINSZ)");
     /* <!> Check rc */
-    update_cursor_max_bounds(&state.cursor, ioctlOut.ws_row - 1,
-                             ioctlOut.ws_col);
+    update_cursor_maxline(&state.cursor, ioctlOut.ws_row - 1);
+    state.maxCol = ioctlOut.ws_col;
 }
 
 #undef _DEFAULT_SOURCE

@@ -15,7 +15,7 @@ void test_elementary_cursor_motion(void)
     struct Cursor c;
     init_cursor(&c);
     warp_cursor(&c, 1, 1);
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 80, 80),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_maxline(&c, 80),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* Single-movement */
@@ -36,7 +36,7 @@ void test_elementary_cursor_oob(void)
     init_cursor(&c);
 
     /* Weird upper bounds, but still okay. */
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 0, 0),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_maxline(&c, 0),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* Alternating 1 and 0 cases, moving outside the bounding box */
@@ -44,10 +44,10 @@ void test_elementary_cursor_oob(void)
         "'Down' cursor movement must return 1 when out of bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_up(&c),
         "'Up' cursor movement must return 0 when returning to bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_rt(&c),
-        "'Right' cursor movement must return 1 when out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_rt(&c),
+        "'Right' cursor movement must return 0 when defenestrated.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_lt(&c),
-        "'Left' cursor movement must return 0 when returning to bounds.");
+        "'Left' cursor movement must return 0 when refenestrated.");
 
     /* The other corner, negative co-ordinates. */
     init_cursor(&c);
@@ -55,10 +55,10 @@ void test_elementary_cursor_oob(void)
         "'Up' cursor movement must return 1 when out of bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_dn(&c),
         "'Down' cursor movement must return 0 when returning to bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_lt(&c),
-        "'Left' cursor movement must return 1 when out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_lt(&c),
+        "'Left' cursor movement must return 0 when defenestrated.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_rt(&c),
-        "'Right' cursor movement must return 0 when returning to bounds.");
+        "'Right' cursor movement must return 0 when refenestrated.");
 }
 
 /* Expected motion and boolean checks for end-of-line and start-of-line
@@ -77,7 +77,7 @@ void test_line_cursor_motion_checks(void)
     /* Cursor setup */
     struct Cursor c;
     init_cursor(&c);
-    update_cursor_max_bounds(&c, 80, 80);
+    update_cursor_maxline(&c, 80);
 
     TEST_ASSERT_MESSAGE(is_cursor_sol(&c),
         "Cursor must be initialised at the origin by default.");
@@ -141,7 +141,7 @@ void test_line_cursor_motion_checks(void)
 
 /* Do line movement methods return what they should? Only eol is really
  * relevant here. */
-void test_line_cursor_oob(void)
+void test_line_cursor_not_oob(void)
 {
     /* Line setup */
     struct Line* l;
@@ -156,13 +156,13 @@ void test_line_cursor_oob(void)
      * line.*/
     struct Cursor c;
     init_cursor(&c);
-    update_cursor_max_bounds(&c, 1, 1);
+    update_cursor_maxline(&c, 1);
     TEST_ASSERT_GREATER_THAN(1, l->len);  /* Test setup */
 
     /* eol should move us out of bounds */
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, cursor_eol(&c, l),
-        "Cursor is out of bounds when 'eol' is commanded if line is too long "
-        "to handle.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, cursor_eol(&c, l),
+        "Cursor is not out of bounds when 'eol' is commanded, even if the "
+        "line is too long for the window.");
 
     destroy_line(l);
 }
@@ -177,11 +177,11 @@ void test_update_oob(void)
         "Warping cursor must return 1 if the bounds are not defined, and "
         "the destination is not the origin.");
 
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, 6, 7),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_maxline(&c, 6),
         "Update must return 0 if the cursor is still in-bounds.");
 
     /* An oob update */
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, update_cursor_max_bounds(&c, 1, 1),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, update_cursor_maxline(&c, 1),
         "Update must return 1 if the cursor is now out of bounds.");
 }
 
@@ -193,15 +193,15 @@ void test_warp_oob(void)
     const int bound = 80;
 
     /* Column moves */
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_max_bounds(&c, bound, bound),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, update_cursor_maxline(&c, bound),
         "Update must return 0 if the cursor is still in-bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, bound),
         "Warp-col must return 0 if the cursor is still in-bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, 0),
         "Warp-col must return 0 if the cursor is still in-bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, -1),
-        "Warp-col must return 1 if the cursor is out of bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, bound + 1),
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, -1),
+        "Warp-col must return 0 if the cursor is defenestrated.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, bound + 1),
         "Warp-col must return 0 if the cursor is still in-bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, bound),
         "Warp-col must return 0 if the cursor is still in-bounds.");
@@ -220,19 +220,11 @@ void test_warp_oob(void)
 
     /* Col moves when line is oob */
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, bound + 1),
-        "Warp-line must return 0 if the cursor is still in-bounds.");
+        "Warp-line must return 1 if the cursor is out of bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, 0),
         "Warp-col must return 1 if the cursor is out of line bounds.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_line(&c, 0),
         "Warp-line must return 0 if the cursor returns in-bounds.");
-
-    /* Line moves when col is oob */
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_col(&c, bound + 1),
-        "Warp-col must return 0 if the cursor is still in-bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor_line(&c, 0),
-        "Warp-line must return 1 if the cursor is out of col bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor_col(&c, 0),
-        "Warp-col must return 0 if the cursor returns in-bounds.");
 
     /* Full warps */
     TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, 0, 0),
@@ -246,20 +238,20 @@ void test_warp_oob(void)
 
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, -1, 0),
         "Warp must return 1 if the cursor moves out of bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, 0, -1),
-        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, 0, -1),
+        "Warp must return 0 if the cursor is defenestrated.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, -1, bound),
         "Warp must return 1 if the cursor moves out of bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound, -1),
-        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, bound, -1),
+        "Warp must return 0 if the cursor is defenestrated.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound + 1, 0),
         "Warp must return 1 if the cursor moves out of bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, 0, bound + 1),
-        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, 0, bound + 1),
+        "Warp must return 0 if the cursor is defenestrated.");
     TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound + 1, bound),
         "Warp must return 1 if the cursor moves out of bounds.");
-    TEST_ASSERT_EQUAL_INT_MESSAGE(1, warp_cursor(&c, bound, bound + 1),
-        "Warp must return 1 if the cursor moves out of bounds.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, warp_cursor(&c, bound, bound + 1),
+        "Warp must return 0 if the cursor is defenestrated.");
 }
 
 int main(void)
@@ -268,7 +260,7 @@ int main(void)
     RUN_TEST(test_elementary_cursor_motion);
     RUN_TEST(test_elementary_cursor_oob);
     RUN_TEST(test_line_cursor_motion_checks);
-    RUN_TEST(test_line_cursor_oob);
+    RUN_TEST(test_line_cursor_not_oob);
     RUN_TEST(test_update_oob);
     RUN_TEST(test_warp_oob);
     return UNITY_END();

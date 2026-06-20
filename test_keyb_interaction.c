@@ -14,7 +14,7 @@ extern struct MeState state;
 void setUp(void)
 {
     init_state(NULL, 0);
-    update_cursor_max_bounds(&state.cursor, SHRT_MAX, SHRT_MAX);
+    update_cursor_maxline(&state.cursor, SHRT_MAX);
 }
 
 void tearDown(void){destroy_state();}
@@ -616,9 +616,8 @@ const int caseLineThreeCentre[] = {ALT_('<'), CTRL_('n'), CTRL_('n'),
     CTRL_('l'), 0};
 void test_line_scrolling_and_paging(void)
 {
-    /* This test takes place in a window with five lines and a lot of
-     * columns. */
-    update_cursor_max_bounds(&state.cursor, 5, SHRT_MAX);
+    /* This test takes place in a window with five lines. */
+    update_cursor_maxline(&state.cursor, 5);
     const int* restrict c = caseLineScrollingSetup;
     while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
         "All commands in this test should return 1.");

@@ -22,6 +22,10 @@ struct MeState
      * subtracted from this. */
     int headLineNum;
 
+    /* The column number that corresponds to the right-most printable column of
+     * the terminal window. */
+    int maxCol;
+
     /* File I/O */
     char* filePath;
     FILE* ioFile;

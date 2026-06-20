@@ -65,7 +65,7 @@ void dump_state(FILE* const out)
             state.filePath,
             currentLine, totalLines,
             state.cursor.curLine, state.cursor.curCol,
-            state.cursor.maxCol, state.cursor.maxLine);
+            state.maxCol, state.cursor.maxLine);
 
     /* Each line: the entire contents of the buffer including 0. Lines begin
      * with 'L<NUM>:<LEN>:<SIZE>:', where:
