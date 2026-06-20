@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/param.h>
 #include <unistd.h>
 
 #include "conf.h"
@@ -102,7 +103,8 @@ void redraw_screen(void)
     slidingBuf = state.vt100Buf;
     slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
         (unsigned)(state.cursor.curLine + conf.lineOffset),
-        (unsigned)(state.cursor.curCol + conf.colOffset));
+        (unsigned)(conf.colOffset +
+                   MIN(state.cursor.curCol, state.cursor.maxCol)));
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
