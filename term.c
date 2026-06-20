@@ -89,10 +89,26 @@ void redraw_screen(void)
     }
 
     /* Write! */
+
+    /* If you consider the contents of a file to exist as a set of (potentially
+     * very long) pages joined together horizontally, the value of this
+     * variable is the horizontal page number... */
+    int pageOffset = MAX(state.cursor.curCol / state.maxCol,
+                         0);  /* Defensive */
+    /* ...and this is the corresponding column offset. */
+    int colOffset = pageOffset * state.maxCol;
     do
     {
         if (curLineNum != state.headLineNum) putchar('\n');
-        write(STDOUT_FILENO, curLine->content, (size_t)state.maxCol);
+        if (curLine->len >= (size_t)colOffset)
+            write(STDOUT_FILENO,
+                  /* Start position */
+                  curLine->content + colOffset,
+                  /* Number of bytes to write, bearing in mind that we don't
+                   * want to write more than we have used in that page, or more
+                   * than the width of the terminal */
+                  MIN(strlen(curLine->content + colOffset),
+                      (size_t)state.maxCol));
         curLine = curLine->next;
         curLineNum++;
     }
@@ -103,8 +119,7 @@ void redraw_screen(void)
     slidingBuf = state.vt100Buf;
     slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
         (unsigned)(state.cursor.curLine + conf.lineOffset),
-        (unsigned)(conf.colOffset +
-                   MIN(state.cursor.curCol, state.maxCol)));
+        (unsigned)(conf.colOffset + state.cursor.curCol - colOffset));
     slidingBuf = slide_copy(VT100_CURSOR_SHOW, slidingBuf);
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
