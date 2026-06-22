@@ -60,43 +60,49 @@ char* stage_draw_fci(char* const buf)
 
 void redraw_screen(void)
 {
-    struct Line* curLine;
-    long curLineNum;
+    struct Line* curLine = state.buffer.topLine;
+    long curLineNum = state.headLineNum < 0 ? state.headLineNum
+        : 0; /* Sanity */
 
-    /* Clear screen and draw fci */
-    char* slidingBuf = state.vt100Buf;
+    /* Much of how we write to screen depends on where the cursor is. If the
+     * cursor is horizontally-further than the screen displays, then redrawing
+     * needs to capture this. */
     update_window_size();
+    /* If you consider the contents of a file to exist as a set of (potentially
+     * very long) pages joined together horizontally, the value of this
+     * variable is the horizontal page number... */
+    int const pageOffset = MAX(state.cursor.curCol / state.maxCol,
+                               0);  /* Defensive */
+    /* ...and this is the corresponding column offset, noting that one
+     * character is duplicated across pages. */
+    int const colOffset = MAX(pageOffset * state.maxCol - 1, 0);
+
+    /* Clear screen and draw fci, if we are on the first horizontal page. This
+     * draws the fci first so that the actual text overlays it naturally. */
+    char* slidingBuf = state.vt100Buf;
     slidingBuf = slide_copy(VT100_CURSOR_HIDE, slidingBuf);
     slidingBuf = slide_copy(VT100_ERASE_IN_DISPLAY_ALL, slidingBuf);
     slidingBuf = slide_copy(VT100_CURSOR_0_0, slidingBuf);
-    slidingBuf = stage_draw_fci(slidingBuf);
-    slidingBuf = slide_copy(VT100_CURSOR_0_0, slidingBuf);
+    if (!pageOffset)
+    {
+        slidingBuf = stage_draw_fci(slidingBuf);
+        slidingBuf = slide_copy(VT100_CURSOR_0_0, slidingBuf);
+    }
     *slidingBuf = 0;
     vt100_exec(state.vt100Buf);
 
-    /* then actual text (so it overlaps the fci) */
-    curLine = state.buffer.topLine;
-    curLineNum = state.headLineNum < 0 ? state.headLineNum : 0;  /* Sanity */
-
-    /* Re-centre if out of bounds. */
+    /* Re-centre the view if the cursor has moved out of bounds. */
     if (cursor_oob_check(&(state.cursor))) centre_on_line();
 
-    /* Jump to head line inefficiently <!> */
+    /* Jump to the head line, albeit inefficiently <!>, where we start
+     * writing. */
     while (curLineNum != state.headLineNum)
     {
         curLine = curLine -> next;
         curLineNum++;
     }
 
-    /* Write! */
-
-    /* If you consider the contents of a file to exist as a set of (potentially
-     * very long) pages joined together horizontally, the value of this
-     * variable is the horizontal page number... */
-    int pageOffset = MAX(state.cursor.curCol / state.maxCol,
-                         0);  /* Defensive */
-    /* ...and this is the corresponding column offset. */
-    int colOffset = pageOffset * state.maxCol;
+    /* Write each 'visible' line in sequence */
     do
     {
         if (curLineNum != state.headLineNum) putchar('\n');
@@ -115,7 +121,7 @@ void redraw_screen(void)
     while (curLine && curLineNum - state.headLineNum <= state.cursor.maxLine);
     fflush(stdout);
 
-    /* reset the cursor */
+    /* Reset the vt100 cursor */
     slidingBuf = state.vt100Buf;
     slidingBuf = vt100_cursor_pos_to_buf(slidingBuf,
         (unsigned)(state.cursor.curLine + conf.lineOffset),
