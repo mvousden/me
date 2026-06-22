@@ -48,7 +48,6 @@ What me can do
 What it can't do, that Mark would like it to do
 ===
 
- - Handle long lines sensibly, either by wrapping or truncating
  - Whitespace-aware newline by e.g. following the indentation of the previous
    line.
  - Toggle-able binary editing mode
