@@ -333,7 +333,7 @@ void test_word_movement(void)
     const char* restrict c = caseWordMoveSetupTp;
     while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
         "All commands in this test should return 1.");
-    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_('m')),
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(CTRL_ALT_('m')),
         "All commands in this test should return 1.");
     c = caseWordMoveSetupBt;
     while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
@@ -543,8 +543,8 @@ void test_visible_chars(void)
         "The current line should be the top line in the state.");
 }
 
-const int caseWhitespaceZap[] = {' ', 'a', CTRL_('m'),
-    ' ', ' ', 'b', CTRL_('m'),
+const int caseWhitespaceZap[] = {' ', 'a', CTRL_ALT_('m'),
+    ' ', ' ', 'b', CTRL_ALT_('m'),
     'c', CTRL_('m'),
     'd', ' ', CTRL_('m'),
     'e', ' ', CTRL_('m'),
