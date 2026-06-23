@@ -384,27 +384,36 @@ void test_merge_line_with_next_empty_empty(void)
 void test_split_line_empty(void)
 {
     TEST_ASSERT_NULL_MESSAGE(testLine->next, "Test precondition failure.");
-    split_line(testLine, 0, 0);
-    TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
-        "Line should have a 'next' defined after splitting.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->content,
-        "Splitting an empty line should leave it empty.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
-        "Splitting an empty line should create an empty 'next'.");
+    for (int wsAware = 0; wsAware < 2; wsAware++)
+    {
+        split_line(testLine, 0, 0);
+        TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
+            "Line should have a 'next' defined after splitting.");
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->content,
+            "Splitting an empty line should leave it empty.");
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
+            "Splitting an empty line should create an empty 'next'.");
+    }
 }
 
 void test_split_line_content(void)
 {
-    const char* c = alphabet;
-    do append_char(testLine, *c++);
-    while (testLine->len < 6);
-    split_line(testLine, 3, 0);
-    TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
-        "Line should have a 'next' defined after splitting.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("abc", testLine->content,
-        "Lines should be split at the offset.");
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("def", testLine->next->content,
-        "Lines should be split at the offset.");
+    for (int wsAware = 0; wsAware < 2; wsAware++)
+    {
+        const char* c = alphabet;
+        do append_char(testLine, *c++);
+        while (testLine->len < 6);
+        split_line(testLine, 3, 0);
+        TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
+            "Line should have a 'next' defined after splitting.");
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("abc", testLine->content,
+            "Lines should be split at the offset.");
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("def", testLine->next->content,
+            "Lines should be split at the offset.");
+        /* Reset the test line */
+        for (size_t x = 0; x < 4; testLine->content[x++] = 0);
+        testLine->len = 0;
+    }
 }
 
 /* Split chain at zero, test the new line is inserted in the 'linked'
