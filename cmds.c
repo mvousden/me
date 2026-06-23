@@ -254,11 +254,13 @@ int cmd_split_line(int wsAware)
     if (wsAware)
     {
         int wsFound = 0;
-        int col;
-        for (col = 0; isalnum(state.buffer.currentLine->content[col]);
-             wsFound |= (state.buffer.currentLine->content[col++] == ' '));
+        char const* curContent;
+        for (curContent = state.buffer.currentLine->content;
+             !isalnum(*curContent) && *curContent;
+             wsFound |= *curContent++ == ' ');
         /* Simple copy without if. Trust in the optimiser. */
-        wsCount = wsFound * col;
+        wsCount = wsFound *
+            (int)(curContent - state.buffer.currentLine->content);
     }
 
     /* Do the actual splitting! */
