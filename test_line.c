@@ -384,7 +384,7 @@ void test_merge_line_with_next_empty_empty(void)
 void test_split_line_empty(void)
 {
     TEST_ASSERT_NULL_MESSAGE(testLine->next, "Test precondition failure.");
-    split_line(testLine, 0, 0, 0);
+    split_line(testLine, 0, 0);
     TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
         "Line should have a 'next' defined after splitting.");
     TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->content,
@@ -399,7 +399,7 @@ void test_split_line_content(void)
     const char* c = alphabet;
     do append_char(testLine, *c++);
     while (testLine->len < 6);
-    split_line(testLine, 3, 0, 0);
+    split_line(testLine, 3, 0);
     TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
         "Line should have a 'next' defined after splitting.");
     TEST_ASSERT_EQUAL_STRING_MESSAGE("abc", testLine->content,
@@ -414,7 +414,7 @@ void test_split_line_respects_chain(void)
 {
     const struct Line* curLine;
     setUpMoreLines();
-    split_line(lineChain[0], 0, 0, 0);
+    split_line(lineChain[0], 0, 0);
     for (curLine = lineChain[0]; curLine != lineChain[CHAIN_LEN - 1];
          curLine = curLine->next)
         TEST_ASSERT_NOT_NULL_MESSAGE(curLine->next,
@@ -429,31 +429,27 @@ void test_split_line_respects_chain(void)
 void test_split_line_whitespace(void)
 {
     struct Line* curLine;
-    split_line(testLine, 0, ' ', 0);
+    split_line(testLine, 0, 0);
     curLine = testLine->next;
     TEST_ASSERT_EQUAL_STRING_MESSAGE("", curLine->content,
         "No whitespace should be added to split line if wsCount is 0.");
-    split_line(curLine, 0, ' ', 1);
+    split_line(curLine, 0, 1);
     curLine = curLine->next;
     TEST_ASSERT_EQUAL_STRING_MESSAGE(" ", curLine->content,
         "One whitespace should be added to split line if wsCount is one.");
-    split_line(curLine, 1, ' ', 1);
+    split_line(curLine, 1, 1);
     curLine = curLine->next;
     TEST_ASSERT_EQUAL_STRING_MESSAGE(" ", curLine->content,
         "One whitespace should be added to split line if wsCount is one, "
         "working with a non-zero offset.");
-    split_line(curLine, 1, 'a', 4);
+    split_line(curLine, 1, 4);
     curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("aaaa", curLine->content,
-        "Non-whitespace characters should also be compatible.");
-    split_line(curLine, 2, 'b', 2);
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("    ", curLine->content,
+        "Multiple whitespace characters should also be compatible.");
+    split_line(curLine, 2, 2);
     curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("bbaa", curLine->content,
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("    ", curLine->content,
         "Whitespace must be pre-pended.");
-    split_line(curLine, 1, '\t', 4);
-    curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("\t\t\t\tbaa", curLine->content,
-        "Non-printable characters should also be written.");
 }
 
 int main(void)

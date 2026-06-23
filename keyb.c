@@ -90,8 +90,9 @@ int proc_key(const unsigned key)
     case CTRL_('e'):
         return cmd_move_line_end();
     case CTRL_('m'):
+        return cmd_split_line_newline_aware();
     case CTRL_ALT_('m'):
-        return cmd_split_line(' ', 0);
+        return cmd_split_line(0);
     case DEL:
     case CTRL_('d'):
         return cmd_delete_char(0);

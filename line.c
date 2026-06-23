@@ -134,13 +134,13 @@ void merge_line_with_next(struct Line* const restrict line)
  * new line placed after this one. Adds whitespace to that line if
  * necessary. */
 void split_line(struct Line* const restrict line, size_t const off,
-                char const ws, unsigned wsCount)
+                int wsCount)
 {
     /* Something to hold a string of repeated whitespace characters, so that it
      * can be appended to the new line efficiently. */
-    char* const wsStr = malloc((wsCount + 1) * sizeof(char));
+    char* const wsStr = malloc(((size_t)wsCount + 1) * sizeof(char));
     /* Insert new line */
-    struct Line* oldNext = line->next;
+    struct Line* const oldNext = line->next;
     struct Line* newLine;
     if (!wsStr) err("split_line (OOM)");
     if (!(newLine = malloc(sizeof(struct Line)))) err("split_line (OOM)");
@@ -148,7 +148,7 @@ void split_line(struct Line* const restrict line, size_t const off,
     line->next = newLine;
     init_line(newLine, line, oldNext);
     /* Add whitespace to new line, and terminate it. */
-    for (wsStr[wsCount] = 0; wsCount; wsStr[--wsCount] = ws);
+    for (wsStr[wsCount] = 0; wsCount; wsStr[--wsCount] = ' ');
     append_string(newLine, wsStr);
     /* Copy text from cursor to new line */
     append_string(newLine, line->content + off);
