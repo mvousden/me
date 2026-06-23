@@ -142,6 +142,7 @@ void split_line(struct Line* const restrict line, size_t const off,
     /* Insert new line */
     struct Line* oldNext = line->next;
     struct Line* newLine;
+    if (!wsStr) err("split_line (OOM)");
     if (!(newLine = malloc(sizeof(struct Line)))) err("split_line (OOM)");
     if (oldNext) oldNext->prev = newLine;
     line->next = newLine;
