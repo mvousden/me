@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "conf.h"
+#include "ctype.h"
 #include "error.h"
 #include "line.h"
 extern struct MeConf conf;
@@ -131,29 +132,49 @@ void merge_line_with_next(struct Line* const restrict line)
 }
 
 /* Splits the contents of this line at an offset, moving the rhs contents to a
- * new line placed after this one. Adds whitespace to that line if
- * necessary. */
-void split_line(struct Line* const restrict line, size_t const off,
-                int wsCount)
+ * new line placed after this one. Do a whitespace-aware newline split if
+ * requested.
+ *
+ * The rule for a whitespace-aware newline are that, if the upper line contains
+ * a space character (' ') before the first alphanumeric character, the lower
+ * line will have space characters prepended equal to the columnular position
+ * of that first alphanumeric character.
+ *
+ * Returns the number of prepended whitespace, or zero if not wsAware. */
+int split_line(struct Line* const restrict line, size_t const off,
+               int const wsAware)
 {
-    /* Something to hold a string of repeated whitespace characters, so that it
-     * can be appended to the new line efficiently. */
-    char* const wsStr = malloc(((size_t)wsCount + 1) * sizeof(char));
     /* Insert new line */
     struct Line* const oldNext = line->next;
     struct Line* newLine;
-    if (!wsStr) err("split_line (OOM)");
     if (!(newLine = malloc(sizeof(struct Line)))) err("split_line (OOM)");
     if (oldNext) oldNext->prev = newLine;
     line->next = newLine;
     init_line(newLine, line, oldNext);
-    /* Add whitespace to new line, and terminate it. */
-    for (wsStr[wsCount] = 0; wsCount; wsStr[--wsCount] = ' ');
-    append_string(newLine, wsStr);
+
+    /* Add whitespace to the new line, and terminate it, if
+       whitespace-aware. */
+    int wsCount = 0;
+    if (wsAware)
+    {
+        int wsFound = 0;
+        char const* curContent;
+        for (curContent = line->content;
+             !isalnum(*curContent) && *curContent;
+             wsFound |= *curContent++ == ' ');
+        wsCount = !wsFound ? 0 : (int)(curContent - line->content);
+        char* const wsStr = malloc(((size_t)wsCount + 1) * sizeof(char));
+        if (!wsStr) err("split_line (OOM)");
+        for (wsStr[wsCount] = 0; wsCount; wsStr[--wsCount] = ' ');
+        append_string(newLine, wsStr);
+        free(wsStr);
+    }
+
     /* Copy text from cursor to new line */
     append_string(newLine, line->content + off);
     /* Truncate old line */
     line->content[off] = 0;
     line->len = off;
-    free(wsStr);
+
+    return wsCount;
 }

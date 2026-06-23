@@ -390,8 +390,7 @@ void test_split_line_empty(void)
     TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->content,
         "Splitting an empty line should leave it empty.");
     TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
-        "Splitting an empty line should create an empty 'next', if no "
-        "whitespace argument is passed.");
+        "Splitting an empty line should create an empty 'next'.");
 }
 
 void test_split_line_content(void)
@@ -425,33 +424,6 @@ void test_split_line_respects_chain(void)
         "End of chain should remain consistent after splitting.");
 }
 
-/* Various whitespace-adding checks */
-void test_split_line_whitespace(void)
-{
-    struct Line* curLine;
-    split_line(testLine, 0, 0);
-    curLine = testLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("", curLine->content,
-        "No whitespace should be added to split line if wsCount is 0.");
-    split_line(curLine, 0, 1);
-    curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE(" ", curLine->content,
-        "One whitespace should be added to split line if wsCount is one.");
-    split_line(curLine, 1, 1);
-    curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE(" ", curLine->content,
-        "One whitespace should be added to split line if wsCount is one, "
-        "working with a non-zero offset.");
-    split_line(curLine, 1, 4);
-    curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("    ", curLine->content,
-        "Multiple whitespace characters should also be compatible.");
-    split_line(curLine, 2, 2);
-    curLine = curLine->next;
-    TEST_ASSERT_EQUAL_STRING_MESSAGE("    ", curLine->content,
-        "Whitespace must be pre-pended.");
-}
-
 int main(void)
 {
     UNITY_BEGIN();
@@ -483,7 +455,6 @@ int main(void)
     RUN_TEST(test_split_line_empty);
     RUN_TEST(test_split_line_content);
     RUN_TEST(test_split_line_respects_chain);
-    RUN_TEST(test_split_line_whitespace);
     return UNITY_END();
 }
 

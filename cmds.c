@@ -3,7 +3,6 @@
 
 #include "conf.h"
 #include "cmds.h"
-#include "ctype.h"
 #include "error.h"
 #include "helpers.h"
 #include "line.h"
@@ -246,26 +245,9 @@ int cmd_save_file(void)
 
 int cmd_split_line(int wsAware)
 {
-    /* The rule for a whitespace-aware newline are that, if the upper line
-     * contains a space character (' ') before the first alphanumeric
-     * character, the lower line will have space characters prepended equal to
-     * the columnular position of that first alphanumeric character. */
-    int wsCount = 0;
-    if (wsAware)
-    {
-        int wsFound = 0;
-        char const* curContent;
-        for (curContent = state.buffer.currentLine->content;
-             !isalnum(*curContent) && *curContent;
-             wsFound |= *curContent++ == ' ');
-        /* Simple copy without if. Trust in the optimiser. */
-        wsCount = wsFound *
-            (int)(curContent - state.buffer.currentLine->content);
-    }
-
-    /* Do the actual splitting! */
-    split_line(state.buffer.currentLine, (size_t)state.cursor.curCol, wsCount);
-    warp_cursor_col(&state.cursor, (int)wsCount);
+    int ws = split_line(state.buffer.currentLine, (size_t)state.cursor.curCol,
+                        wsAware);
+    warp_cursor_col(&state.cursor, ws);
     cursor_dn(&state.cursor);
     state.buffer.currentLine = state.buffer.currentLine->next;
     return 1;
