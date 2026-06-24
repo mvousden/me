@@ -468,6 +468,30 @@ void test_word_movement(void)
         "Word hopping must not alter line content.");
 }
 
+const unsigned caseCurMovement[] = {' ', ' ', 'a', 'b', 'c', 'd',
+    ARR_LF, ARR_LF, CTRL_('m'), 0};
+void test_cursor_position_after_wsaware_newline(void)
+{
+    /* Type the chars. */
+    const unsigned* restrict u = caseCurMovement;
+    while (*u) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key(*u++),
+        "All commands in this test should return 1.");
+
+    /* Check line content */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("  ab",
+                                     state.buffer.topLine->content,
+        "Top line should be split in the appropriate position.");
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("  cd",
+                                     state.buffer.topLine->next->content,
+        "Whitespace should be added before split content.");
+
+    /* Check cursor position */
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, state.cursor.curLine,
+        "Cursor should end on bottom line after split.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(2, state.cursor.curCol,
+        "Cursor should end just after the inserted whitespace, after split.");
+}
+
 const unsigned caseHanging[] = {'a', 'b', 'c', CTRL_('m'), 'd',
     ARR_UP, NAV_END, ARR_DN, 'e', 0};
 void test_hanging_cursor(void)
@@ -775,5 +799,6 @@ int main(void)
     RUN_TEST(test_hanging_cursor);
     RUN_TEST(test_whitespace_zap);
     RUN_TEST(test_line_scrolling_and_paging);
+    RUN_TEST(test_cursor_position_after_wsaware_newline);
     return UNITY_END();
 }

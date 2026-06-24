@@ -154,15 +154,16 @@ int split_line(struct Line* const restrict line, size_t const off,
 
     /* Add whitespace to the new line, and terminate it, if
        whitespace-aware. */
-    int wsCount = 0;
+    int out = 0;
     if (wsAware)
     {
+        int wsCount;
         int wsFound = 0;
         char const* curContent;
         for (curContent = line->content;
              !isalnum(*curContent) && *curContent;
              wsFound |= *curContent++ == ' ');
-        wsCount = !wsFound ? 0 : (int)(curContent - line->content);
+        out = wsCount = !wsFound ? 0 : (int)(curContent - line->content);
         char* const wsStr = malloc(((size_t)wsCount + 1) * sizeof(char));
         if (!wsStr) err("split_line (OOM)");
         for (wsStr[wsCount] = 0; wsCount; wsStr[--wsCount] = ' ');
@@ -176,5 +177,5 @@ int split_line(struct Line* const restrict line, size_t const off,
     line->content[off] = 0;
     line->len = off;
 
-    return wsCount;
+    return out;
 }
