@@ -52,8 +52,6 @@ What it can't do, that Mark would like it to do
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut (command is implemented)
- - Text selection
- - Kill/yank with ring buffer
  - Word-wrap mechanism (e.g. M-q (emacs))
  - Save written text to a particular path
  - Be demonstrably performant - the data structure for holding text is
@@ -74,6 +72,7 @@ What it can't do, and probably will never do
    configurator)
  - Non-ASCII characters
  - Regex search, and replacement (use e.g. sed)
+ - Cut/copy/paste (use e.g. tmux)
 
 Keyboard shortcuts, in emacs-ese
 ===
