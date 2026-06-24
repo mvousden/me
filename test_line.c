@@ -386,7 +386,7 @@ void test_split_line_empty(void)
     TEST_ASSERT_NULL_MESSAGE(testLine->next, "Test precondition failure.");
     for (int wsAware = 0; wsAware < 2; wsAware++)
     {
-        split_line(testLine, 0, 0);
+        split_line(testLine, 0, wsAware);
         TEST_ASSERT_NOT_NULL_MESSAGE(testLine->next,
             "Line should have a 'next' defined after splitting.");
         TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->content,
