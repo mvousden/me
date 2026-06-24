@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -433,6 +434,126 @@ void test_split_line_respects_chain(void)
         "End of chain should remain consistent after splitting.");
 }
 
+/* Ensure that whitespace is prepended to the new line when splitting a line
+ * with leading whitespace, but only when a whitespace-aware newline is
+ * used. */
+void test_split_line_leading_whitespace(void)
+{
+    for (int wsAware = 0; wsAware < 2; wsAware++)
+    {
+        for (size_t n = 0; n < 3; n++) append_char(testLine, ' ');
+        append_char(testLine, 'a');
+        split_line(testLine, 4, wsAware);
+        TEST_ASSERT_EQUAL_STRING_MESSAGE("   a", testLine->content,
+            "After splitting at the end of the line, the original line must "
+            "remain the same.");
+        if (wsAware)
+            TEST_ASSERT_EQUAL_STRING_MESSAGE("   ", testLine->next->content,
+                "Whitespace-aware splitting should indent on next line.");
+        else
+            TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
+                "Whitespace-aware splitting should not indent on next line.");
+
+        /* Reset the test line */
+        for (size_t x = 0; x < 4; testLine->content[x++] = 0);
+        testLine->len = 0;
+    }
+}
+
+/* Ensure that whitespace is prepended to the new line when splitting a line
+ * with leading whitespace, and that non-whitespace and non-alphanumeric
+ * characters are ignored appropriately. This behaviour should only indent when
+ * a whitespace-aware newline is used. */
+void test_split_line_leading_whitespace_with_printable(void)
+{
+    char in[9];
+    for (int wsAware = 0; wsAware < 2; wsAware++)
+    {
+        /* Test each printable non-alphanum, non-space character in the set. */
+        for (char c = 0x21; c < 0x74; c++)
+        {
+            if (isalnum(c)) continue;
+            snprintf(in, 9, "  %c Ide;", c);
+            for (char const *c = in; *c; append_char(testLine, *c++));
+            split_line(testLine, 7, wsAware);  /* Not quite the end */
+            /* Last printed char should be chopped off by split_line */
+            in[7] = 0;
+            TEST_ASSERT_EQUAL_STRING_MESSAGE(in, testLine->content,
+                "After splitting partway through a string, the original line "
+                "must be truncated appropriately.");
+            if (wsAware)
+                TEST_ASSERT_EQUAL_STRING_MESSAGE("    ;",
+                                                 testLine->next->content,
+                    "Whitespace-aware splitting should indent on next line "
+                    "through non-alphanumeric, non-whitespace characters.");
+            else
+                TEST_ASSERT_EQUAL_STRING_MESSAGE(";", testLine->next->content,
+                    "Non-whitespace-aware splitting should not indent on next "
+                    "line.");
+
+            /* Reset the test line */
+            for (size_t x = 0; x < 9; testLine->content[x++] = 0);
+            testLine->len = 0;
+        }
+    }
+}
+
+/* When using a whitespace-aware split on a line that contains only space,
+ * the original line is effectively duplicated. */
+#define PATIENCE 80
+void test_split_line_only_whitespace_is_duplicated(void)
+{
+    /* For varying numbers of space characters... */
+    char out[PATIENCE] = {0};
+    for (size_t numSpaces = 0; numSpaces < PATIENCE - 1; numSpaces++)
+    {
+        for (size_t i = numSpaces; i; i--)
+        {
+            out[numSpaces - i] = ' ';
+            append_char(testLine, ' ');
+        }
+        split_line(testLine, numSpaces, 1);
+        TEST_ASSERT_EQUAL_STRING_MESSAGE(out, testLine->content,
+            "After splitting a line with only whitespace, the initial line "
+            "must remain unchanged.");
+        TEST_ASSERT_EQUAL_STRING_MESSAGE(out, testLine->next->content,
+            "After splitting a line with only whitespace, the next line must "
+            "be a copy of the original.");
+
+        /* Reset the test line */
+        for (size_t x = 0; x < numSpaces; testLine->content[x++] = 0);
+        testLine->len = 0;
+    }
+}
+
+/* Ensure that whitespace is correctly prepended to the new line when there are
+ * no alphanumeric characters in a line being split. */
+void test_split_line_leading_whitespace_with_no_alphanums(void)
+{
+    char const *const s = "  );-!?^";
+    for (int wsAware = 0; wsAware < 2; wsAware++)
+    {
+        for (char const* c = s; *c; append_char(testLine, *c++));
+        split_line(testLine, strlen(s), wsAware);
+        TEST_ASSERT_EQUAL_STRING_MESSAGE(s, testLine->content,
+            "After splitting at the end of the line, the original line must "
+            "remain the same.");
+        if (wsAware)
+            TEST_ASSERT_EQUAL_STRING_MESSAGE("        ",
+                                             testLine->next->content,
+                "If a line with no alphanumeric characters is split at the "
+                "end, the new line must have whitespace inserted.");
+        else
+            TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
+                "Non-whitespace-aware splitting should not indent on next "
+                "line.");
+
+        /* Reset the test line */
+        for (size_t x = 0; x < strlen(s); testLine->content[x++] = 0);
+        testLine->len = 0;
+    }
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -464,6 +585,10 @@ int main(void)
     RUN_TEST(test_split_line_empty);
     RUN_TEST(test_split_line_content);
     RUN_TEST(test_split_line_respects_chain);
+    RUN_TEST(test_split_line_leading_whitespace);
+    RUN_TEST(test_split_line_leading_whitespace_with_printable);
+    RUN_TEST(test_split_line_only_whitespace_is_duplicated);
+    RUN_TEST(test_split_line_leading_whitespace_with_no_alphanums);
     return UNITY_END();
 }
 
