@@ -48,8 +48,7 @@ What me can do
 What it can't do, that Mark would like it to do
 ===
 
- - Whitespace-aware newline by e.g. following the indentation of the previous
-   line.
+ - Delete one word ahead (i.e. M-d)
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut (command is implemented)
