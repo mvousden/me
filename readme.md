@@ -91,6 +91,7 @@ Keyboard shortcuts, in emacs-ese
  - M-</M->: move cursor to start/end of document
  - M-f/M-b: move cursor to end/start of next/previous word
  - C-m: return synonym
+ - C-M-m: return, but without automatic indentation
  - C-d: delete one character ahead
  - M-\: delete all space (ASCII 0x20) from this cursor until the next character
 
@@ -106,3 +107,13 @@ Not bugs
  - *Page up/down cursor*: When paging up/down, the cursor will move to the
    top/bottom of the window. This is the opposite behaviour of some editors,
    but is deliberate here.
+
+ - *Automatic indentation*: When hitting return or C-m, you may notice that the
+   editor inserts some whitespace to indent the next line. The amount of
+   whitespace added is equal to the columnular position of the first
+   alphanumeric character in the line. This works well for simple documents
+   (like this readme), but doesn't intelligently indent for most programming
+   languages. This is deliberate here, because I do not like fighting these
+   systems in existing editors. Optionally, if you don't want automatic
+   indentation of any kind, If you don't want any of this, hit C-M-m instead
+   (or remap the keys in the source).
