@@ -2,6 +2,7 @@
 #define ME_CMDS_H
 int cmd_centre_on_line(void);
 int cmd_delete_char(const int);
+int cmd_delete_word(void);
 int cmd_dump_state(void);
 int cmd_insert_char(unsigned const);
 int cmd_jump_to_line(int const);

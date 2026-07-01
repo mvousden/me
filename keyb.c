@@ -98,6 +98,8 @@ int proc_key(const unsigned key)
         return cmd_delete_char(0);
     case BACKSPACE:
         return cmd_delete_char(-1);
+    case ALT_('d'):
+        return cmd_delete_word();
     case CTRL_('s'):
         return cmd_save_file();
     case CTRL_ALT_('s'):

@@ -47,6 +47,27 @@ int cmd_delete_char(const int cursorOff)
     return 1;
 }
 
+int cmd_delete_word(void)
+{
+    FILE *tmp = fopen("tmp", "a");
+    char const *c = get_cp_at_cursor();
+    /* Delete until word, then delete word. <!> EOF? */
+    int mode = 0;
+    while (*c && mode < 2)
+    {
+        fputc((int)*c, tmp);
+        if (is_alphanum(*c) == mode)
+        {
+            cmd_delete_char(0);
+            c = get_cp_at_cursor();
+        }
+        else mode++;
+    }
+    if (!mode) fputc((int)*c, tmp);
+    fclose(tmp);
+    return 1;
+}
+
 int cmd_dump_state(void)
 {
     FILE* const out = fopen("me_dump", "w");
