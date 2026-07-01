@@ -83,6 +83,7 @@ void dump_state(FILE* const out)
         fprintf(out, "L%zu:%zu:%zu:", currentLine, lineIt->len,
                 lineIt->bufSiz);
         fwrite(lineIt->content, sizeof(char), lineIt->bufSiz, out);
+        fputc('\n', out);
         currentLine++;
     }
     while ((lineIt = lineIt->next));
