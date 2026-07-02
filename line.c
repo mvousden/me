@@ -128,6 +128,7 @@ void merge_line_with_next(struct Line* const restrict line)
     append_string(line, line->next->content);
     /* Cleanup cleared line. */
     line->next = markedForDeath->next;
+    if (line->next) line->next->prev = line;
     destroy_line(markedForDeath);
 }
 
