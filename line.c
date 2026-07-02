@@ -58,7 +58,7 @@ void delete_char_from_line(struct Line* const restrict line, size_t const off)
     line->len--;
 }
 
-void destroy_line(struct Line* line)
+void destroy_line(struct Line* const line)
 {
     free(line->content);
     free(line);
