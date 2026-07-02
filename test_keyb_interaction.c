@@ -325,6 +325,19 @@ void test_char_movement(void)
         "C-p line test failed.");
 }
 
+void test_word_deletion(void)
+{
+    /* Test spec:
+     *  - single word in line empties that line
+     *  - three words, deletion causes middle word only
+     *  - three words on top line, two words on bottom line causes deletion of
+     *    fourth word and line merge
+     *  - various with punctuation
+     *  - word delete at end of file does nothing
+     */
+    TEST_ASSERT_EQUAL_INT(0, 1);
+}
+
 const char* const caseWordMoveSetupTp = " hello\"hello@hello1he(llo()()";
 const char* const caseWordMoveSetupBt = "abcdefghijklmnopqrstuvwxyz1234567890";
 void test_word_movement(void)
@@ -796,6 +809,7 @@ int main(void)
     RUN_TEST(test_char_movement);
     RUN_TEST(test_word_movement);
     RUN_TEST(test_char_deletion);
+    RUN_TEST(test_word_deletion);
     RUN_TEST(test_hanging_cursor);
     RUN_TEST(test_whitespace_zap);
     RUN_TEST(test_line_scrolling_and_paging);
