@@ -50,10 +50,13 @@ int cmd_delete_char(const int cursorOff)
 int cmd_delete_word(void)
 {
     char const *c = get_cp_at_cursor();
-    /* Delete until word, then delete word. <!> EOF? */
+    /* Delete until word, then delete word. */
     int mode = 0;
-    while (*c && mode < 2)
+    while (mode < 2)
     {
+        /* ...also break at end of file. */
+        if (!*c && !(state.buffer.currentLine->next)) break;
+
         if (is_alphanum(*c) == mode)
         {
             cmd_delete_char(0);
