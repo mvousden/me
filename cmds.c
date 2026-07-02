@@ -49,13 +49,11 @@ int cmd_delete_char(const int cursorOff)
 
 int cmd_delete_word(void)
 {
-    FILE *tmp = fopen("tmp", "a");
     char const *c = get_cp_at_cursor();
     /* Delete until word, then delete word. <!> EOF? */
     int mode = 0;
     while (*c && mode < 2)
     {
-        fputc((int)*c, tmp);
         if (is_alphanum(*c) == mode)
         {
             cmd_delete_char(0);
@@ -63,8 +61,6 @@ int cmd_delete_word(void)
         }
         else mode++;
     }
-    if (!mode) fputc((int)*c, tmp);
-    fclose(tmp);
     return 1;
 }
 
