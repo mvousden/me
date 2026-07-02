@@ -8,7 +8,7 @@
 #include "unity.h"
 
 #define ALPHABET_LEN 26
-#define CHAIN_LEN 3  /* Greater than one */
+#define CHAIN_LEN 4  /* Greater than three */
 
 extern struct MeConf conf;
 
@@ -206,10 +206,10 @@ void test_delete_char_from_line_single(void)
  * should be free from memory leaks */
 void test_destroy_line(void)
 {
+    size_t index;
     setUpMoreLines();
     lineChain[0]->next = NULL;
-    destroy_line(lineChain[1]);
-    destroy_line(lineChain[2]);
+    for (index = 1; index < CHAIN_LEN; destroy_line(lineChain[index++]));
 }
 
 /* Not really testing anything, but the memory checker will yell if this
@@ -380,6 +380,50 @@ void test_merge_line_with_next_empty_empty(void)
     }
     TEST_ASSERT_NULL_MESSAGE(lineChain[0]->next,
         "Line should have no successor after repeated collapse.");
+}
+
+void test_merge_line_with_next_pointer_consistency(void)
+{
+    size_t index = 0;
+    setUpMoreLines();
+
+    /* Sanity check before merge */
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(NULL, lineChain[index]->prev,
+        "Test initialisation failed: line[0]->prev should be NULL.");
+    for (index = 0; index < CHAIN_LEN - 1; index++)
+    {
+        TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[index],
+                                        lineChain[index]->next->prev,
+        "Test initialisation failed: line->next->prev should be consistent.");
+    }
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(NULL, lineChain[CHAIN_LEN - 1]->next,
+        "Test initialisation failed: line[last]->next should be NULL.");
+
+    /* Merge line 1 with line 2 */
+    merge_line_with_next(lineChain[1]);
+
+    /* Sanity check after merge */
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[0]->prev, NULL,
+        "Line chain pointer integrity compromised (0->prev == NULL).");
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[0]->next, lineChain[1],
+        "Line chain pointer integrity compromised (0->next == 1).");
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[1]->prev, lineChain[0],
+        "Line chain pointer integrity compromised (1->prev == 0).");
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[1]->next, lineChain[3],
+        "Line chain pointer integrity compromised (1->next == 3).");
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[3]->prev, lineChain[1],
+        "Line chain pointer integrity compromised (3->prev == 1).");
+    for (index = 3; index < CHAIN_LEN - 1; index++)
+    {
+        TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[index]->next,
+                                        lineChain[index + 1],
+            "Line chain pointer integrity compromised (n->next == n+1).");
+        TEST_ASSERT_EQUAL_HEX64_MESSAGE(lineChain[index + 1]->prev,
+                                        lineChain[index],
+            "Line chain pointer integrity compromised (n+1->prev == n).");
+    }
+    TEST_ASSERT_EQUAL_HEX64_MESSAGE(NULL, lineChain[CHAIN_LEN - 1]->next,
+        "Line chain pointer integrity compromised (end->next == NULL.");
 }
 
 void test_split_line_empty(void)
@@ -582,6 +626,7 @@ int main(void)
     RUN_TEST(test_merge_line_with_next_content_empty);
     RUN_TEST(test_merge_line_with_next_empty_content);
     RUN_TEST(test_merge_line_with_next_empty_empty);
+    RUN_TEST(test_merge_line_with_next_pointer_consistency);
     RUN_TEST(test_split_line_empty);
     RUN_TEST(test_split_line_content);
     RUN_TEST(test_split_line_respects_chain);
