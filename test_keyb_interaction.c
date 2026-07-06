@@ -24,7 +24,7 @@ const unsigned caseCharDeletionSetup[] = {'1', '2', CTRL_('m'),
 void test_char_deletion(void)
 {
     const unsigned delSynonyms[] = {DEL, CTRL_('d')};
-    const size_t numDelSynonyms = 2;
+    const size_t numDelSynonyms = sizeof(delSynonyms) / sizeof(delSynonyms[0]);
     size_t index;
     const unsigned* restrict u;
 
