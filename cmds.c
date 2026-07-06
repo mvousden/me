@@ -3,6 +3,7 @@
 
 #include "conf.h"
 #include "cmds.h"
+#include "ctype.h"
 #include "error.h"
 #include "helpers.h"
 #include "line.h"
@@ -57,7 +58,7 @@ int cmd_delete_word(void)
         /* ...also break at end of file. */
         if (!*c && !(state.buffer.currentLine->next)) break;
 
-        if (is_alphanum(*c) == mode)
+        if ((isalnum(*c) ? 1 : 0) == mode)
         {
             cmd_delete_char(0);
             c = get_cp_at_cursor();
@@ -208,22 +209,22 @@ int cmd_move_word(unsigned const isRight)
      *  - Only if (we're at the start of the line) OR (the previous character
      *    is not part of a word). */
     c = get_cp_at_cursor();
-    if (!isRight && is_alphanum(*c) &&
-        (is_cursor_sol(&state.cursor) || !is_alphanum(*(c-1))))
+    if (!isRight && isalnum(*c) &&
+        (is_cursor_sol(&state.cursor) || !isalnum(*(c-1))))
     {
         move_char(0, &eof);
         if (eof) return 1;  /* Start of document, shortcut */
     }
     /* Forward/backward until we hit the start/end of a word. If we hit the
      * end/start of the buffer, just leave. */
-    while (!is_alphanum(*get_cp_at_cursor()))
+    while (!isalnum(*get_cp_at_cursor()))
     {
         move_char(isRight, &eof);
         if (eof) return 1;  /* End/start of document */
     }
     /* Forward/backward until we hit the end/start of a word. If we hit the
      * end/start of the buffer, just leave. */
-    while (is_alphanum(*get_cp_at_cursor()))
+    while (isalnum(*get_cp_at_cursor()))
     {
         move_char(isRight, &eof);
         if (eof) return 1;  /* End/start of document */

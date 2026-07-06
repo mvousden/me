@@ -22,20 +22,6 @@ void setUp(void)
 
 void tearDown(void){}
 
-/* Oh God how horrifying */
-void test_is_alphanum(void)
-{
-    /* The last delimiter (0x80) denotes the end of ASCII. */
-    const unsigned char delimiters[] = {'0', ':', 'A', '[', 'a', '{', 0x80, 0};
-    const int answers[]              = {0  , 1  , 0  , 1  , 0  , 1  , 0};
-    const unsigned rangeMax = strlen((char*)delimiters);
-    unsigned range;
-    unsigned char test = 0;
-    for (range = 0; range < rangeMax; range++)
-        for (; test < delimiters[range];
-             TEST_ASSERT_EQUAL_UINT(answers[range], is_alphanum((char)test++)));
-}
-
 void test_slide_copy_empty(void)
 {
     char* c = slide_copy(src, buf);
@@ -104,7 +90,6 @@ void test_slide_copy_termination(void)
 int main(void)
 {
     UNITY_BEGIN();
-    RUN_TEST(test_is_alphanum);
     RUN_TEST(test_slide_copy_empty);
     RUN_TEST(test_slide_copy_empty_buf);
     RUN_TEST(test_slide_copy_concatenate);

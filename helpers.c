@@ -45,14 +45,6 @@ void dump_uint_to_tmp_file(unsigned const key)
     fclose(tmp);
 }
 
-/* ASCII */
-int is_alphanum(char const c)
-{
-    return ((c > 0x2f && c < 0x3a) ||  /* digits */
-            (c > 0x40 && c < 0x5b) ||  /* upper-case */
-            (c > 0x60 && c < 0x7b));   /* lower-case */
-}
-
 int is_space(char const c){return c == 0x20;}
 
 /* Dirty string copying function that copies NULL-terminated src to buf, then
