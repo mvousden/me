@@ -325,17 +325,98 @@ void test_char_movement(void)
         "C-p line test failed.");
 }
 
-void test_word_deletion(void)
+
+/* Word deletion on single word in line empties that line. */
+const int caseWordDeletionSingleWord[] = {'a', 'p', 'p', 'l', 'e', ALT_('<'),
+    ALT_('d'), 0};
+void test_word_deletion_single_word(void)
 {
-    /* Test spec:
-     *  - single word in line empties that line
-     *  - three words, deletion causes middle word only
-     *  - three words on top line, two words on bottom line causes deletion of
-     *    fourth word and line merge
-     *  - various with punctuation
-     *  - word delete at end of file does nothing
-     */
-    TEST_ASSERT_EQUAL_INT(0, 1);
+    /* Type the chars. */
+    const int* restrict c = caseWordDeletionSingleWord;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check text is what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("", state.buffer.currentLine->content,
+        "Alt-d must delete a single word, if there is one to delete.");
+}
+
+/* Word deletion on the middle word of a three-word line only deletes the
+ * middle word. */
+const int caseWordDeletionMiddleWord[] = {'a', 'p', 'p', 'l', 'e', ' ',
+    'b', 'a', 'n', 'a', 'n', 'a', ' ',
+    'c', 'h', 'e', 'r', 'r', 'y',
+    ALT_('b'), ALT_('b'), ALT_('d'), 0};
+
+void test_word_deletion_middle(void)
+{
+    /* Type the chars. */
+    const int* restrict c = caseWordDeletionMiddleWord;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check text is what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("apple  cherry",
+                                     state.buffer.currentLine->content,
+        "Alt-d must delete only a single word.");
+}
+
+/* Word deletion at end of line merges appropriately. */
+const int caseWordDeletionMerge[] = {'i', 't', ' ', 'i', 's', CTRL_('m'),
+    'n', 'o', 't', ' ', 'm', 'e',
+    CTRL_('p'), CTRL_('e'), ALT_('d'), 0};
+void test_word_deletion_merge(void)
+{
+    /* Type the chars. */
+    const int* restrict c = caseWordDeletionMerge;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check text is what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("it is me",
+                                     state.buffer.currentLine->content,
+        "Alt-d must merge lines correctly.");
+    TEST_ASSERT_EQUAL_MESSAGE(NULL, state.buffer.currentLine->next,
+        "Merging lines must delete the line after it.");
+}
+
+const int caseWordDeletionPunctuation[] = {'i', 't', ' ',
+    'e', 'a', 't', 's', ',', ' ',
+    's', 'h', 'o', 'o', 't', 's', ',', ' ',
+    'a', 'n', 'd', ' ',
+    'l', 'e', 'a', 'v', 'e', 's', '.',
+    ALT_('b'), ALT_('b'), ALT_('b'), ALT_('d'), 0};
+void test_word_deletion_punctuation(void)
+{
+    /* Type the chars. */
+    const int* restrict c = caseWordDeletionPunctuation;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check text is what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("it eats, , and leaves.",
+                                     state.buffer.currentLine->content,
+        "Alt-d must ignore punctuation at the end of a word.");
+
+    /* Another deletion! */
+    TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)ALT_('d')),
+        "All commands in this test should return 1.");
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("it eats,  leaves.",
+                                     state.buffer.currentLine->content,
+        "Alt-d must consume punctuation at the start.");
+}
+
+const int caseWordDeletionEof[] = {'x', ALT_('d'), 0};
+void test_word_deletion_eof(void)
+{
+    /* Type the chars. */
+    const int* restrict c = caseWordDeletionEof;
+    while (*c) TEST_ASSERT_EQUAL_MESSAGE(1, proc_key((unsigned)*c++),
+        "All commands in this test should return 1.");
+
+    /* Check text is what we expect. */
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("x", state.buffer.currentLine->content,
+        "Alt-d at end of file does nothing.");
 }
 
 const char* const caseWordMoveSetupTp = " hello\"hello@hello1he(llo()()";
@@ -809,7 +890,11 @@ int main(void)
     RUN_TEST(test_char_movement);
     RUN_TEST(test_word_movement);
     RUN_TEST(test_char_deletion);
-    RUN_TEST(test_word_deletion);
+    RUN_TEST(test_word_deletion_single_word);
+    RUN_TEST(test_word_deletion_middle);
+    RUN_TEST(test_word_deletion_merge);
+    RUN_TEST(test_word_deletion_punctuation);
+    RUN_TEST(test_word_deletion_eof);
     RUN_TEST(test_hanging_cursor);
     RUN_TEST(test_whitespace_zap);
     RUN_TEST(test_line_scrolling_and_paging);
