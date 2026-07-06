@@ -48,7 +48,6 @@ What me can do
 What it can't do, that Mark would like it to do
 ===
 
- - Delete one word ahead (i.e. M-d)
  - Toggle-able binary editing mode
  - Undo logic (via command pattern most likely)
  - Goto line shortcut (command is implemented)
@@ -91,6 +90,7 @@ Keyboard shortcuts, in emacs-ese
  - C-m: return synonym
  - C-M-m: return, but without automatic indentation
  - C-d: delete one character ahead
+ - M-d: delete one word ahead
  - M-\: delete all space (ASCII 0x20) from this cursor until the next character
 
 Not bugs
