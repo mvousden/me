@@ -598,6 +598,27 @@ void test_split_line_leading_whitespace_with_no_alphanums(void)
     }
 }
 
+/* Ensure that if a line is split with a large offset value (e.g. if the cursor
+ * is hanging), the created line is empty, and the original line remains
+ * unchanged. */
+void test_split_line_large_offset(void)
+{
+    append_char(testLine, 'x');
+    split_line(testLine, 15, 0);
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("x", testLine->content,
+        "After splitting with an offset larger than the length of the line, "
+        "the offset should be 'truncated'.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(1, testLine->len,
+        "After splitting with an offset larger than the length of the line, "
+        "the offset should be 'truncated'.");
+    TEST_ASSERT_EQUAL_STRING_MESSAGE("", testLine->next->content,
+        "After splitting with an offset larger than the length of the line, "
+        "the new line should be empty.");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, testLine->next->len,
+        "After splitting with an offset larger than the length of the line, "
+        "the new line should have zero length.");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -634,6 +655,7 @@ int main(void)
     RUN_TEST(test_split_line_leading_whitespace_with_printable);
     RUN_TEST(test_split_line_only_whitespace_is_duplicated);
     RUN_TEST(test_split_line_leading_whitespace_with_no_alphanums);
+    RUN_TEST(test_split_line_large_offset);
     return UNITY_END();
 }
 

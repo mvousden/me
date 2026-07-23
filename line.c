@@ -172,11 +172,16 @@ int split_line(struct Line* const restrict line, size_t const off,
         free(wsStr);
     }
 
-    /* Copy text from cursor to new line */
-    append_string(newLine, line->content + off);
-    /* Truncate old line */
-    line->content[off] = 0;
-    line->len = off;
+    /* Copy text from cursor to new line, though we do this defensively: if we
+     * are passed an offset that is beyond the length of this line's
+     * content, we don't do anything. */
+    if (off < line->len)
+    {
+        append_string(newLine, line->content + off);
+        /* Truncate old line */
+        line->content[off] = 0;
+        line->len = off;
+    }
 
     return out;
 }
